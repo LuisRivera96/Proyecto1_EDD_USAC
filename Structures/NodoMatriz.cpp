@@ -6,7 +6,8 @@
 
 #include <iostream>
 #include <stdlib.h>
-
+#include <string>
+#include <string.h>
 using namespace std;
 
 class NodoContenido{
@@ -19,15 +20,12 @@ public:
     NodoContenido *atras;
     int x;
     int y;
-    int R;
-    int G;
-    int B;
-    
+    string RGB;
+    string XY;
     
     NodoContenido(int R,int G, int B,int x, int y){
-        this->R = R;
-        this->G = G;
-        this->B =B;
+        RGB = to_string(R)+"-"+to_string(G)+"-"+to_string(B);
+        XY = "X"+to_string(x)+"Y"+to_string(y);
         this->x = x;
         this->y = y;
         siguiente = NULL;
@@ -49,9 +47,10 @@ public:
     NodoFila *atras;
     NodoContenido *siguienteC;
     int fila;
-    
+    string XF;
     NodoFila(int fila){
         this->fila = fila;
+        XF = "Y"+to_string(fila);
         siguiente = NULL;
         anterior = NULL;
         adelante = NULL;
@@ -68,9 +67,10 @@ public:
     NodoColumna *atras;
     NodoContenido *abajoC;
     int columna;
-    
+    string YC;
     NodoColumna(int columna){
         this->columna = columna;
+        YC = "X"+to_string(columna);
         siguiente = NULL;
         anterior = NULL;
         adelante = NULL;
