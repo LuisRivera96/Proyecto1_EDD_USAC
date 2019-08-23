@@ -206,75 +206,77 @@ public:
         NodoFila* auxiliar = fila;
         NodoContenido* contenido = fila->siguienteC;
         while(auxiliar != NULL){
-            if(auxiliar == fila){
-                line1 += auxiliar->XF +"[label=\""+auxiliar->XF+"\" pos=\"5,3!\"  style = filled, fillcolor = bisque1, group=1];\n"; 
-            }else{
-               line1 += auxiliar->XF +"[label=\""+auxiliar->XF+"\"  style = filled, fillcolor = bisque1, group=1];\n"; 
-            }
             
+            line1 += auxiliar->XF +"[label=\""+auxiliar->XF+"\"  style = filled, fillcolor = bisque1, pos=\"0,"+to_string(0-auxiliar->fila)+"!\"];\n"; 
+            auxiliar = auxiliar->siguiente;
+        }
+        
+        NodoColumna* auxiliarC = columna;
+        while(auxiliarC != NULL){
+            line1 += auxiliarC->YC +"[label=\""+auxiliarC->YC+"\" style=filled, fillcolor=lightskyblue, pos=\""+to_string(auxiliarC->columna)+",0!\"];\n";
+            auxiliarC = auxiliarC->siguiente;
+        }
+        line1 += "header ->"+raizFila->XF+";\n";
+        line1 += "header ->"+raizColumna->YC+";\n";
+        
+        auxiliar = fila;
+        while(auxiliar != NULL){
             if(auxiliar->siguiente != NULL){
                 line1 += auxiliar->XF + " -> " + auxiliar->siguiente->XF + " -> " + auxiliar->XF+";\n";
             }
             
             auxiliar = auxiliar->siguiente;
-            
         }
         
-        NodoColumna* auxiliarC = columna;
-        string rank = "{rank=same; ";
+        auxiliarC = columna;
         while(auxiliarC != NULL){
-            line1 += auxiliarC->YC +"[label=\""+auxiliarC->YC+"\" style=filled, fillcolor=lightskyblue, group="+to_string(auxiliarC->columna+1)+"];\n";
-            rank += auxiliarC->YC+";";
             if(auxiliarC->siguiente != NULL){
                 line1 += auxiliarC->YC + " -> " + auxiliarC->siguiente->YC + " -> " + auxiliarC->YC+";\n";
             }
             auxiliarC = auxiliarC->siguiente;
         }
-        line1 += "header ->"+raizFila->XF+";\n";
-        line1 += "header ->"+raizColumna->YC+";\n";
-        rank += "header;}\n\n";
-        line1 += rank;
-        
         ///contenido
         auxiliar = fila;
         while(auxiliar != NULL){
-            
-            string rank2 = "{rank=same; "+auxiliar->XF+"; ";
             contenido = auxiliar->siguienteC;
             while(contenido != NULL){
                 
-                line1 += contenido->XY +"[label=\""+contenido->RGB+"\" group="+to_string(contenido->x+1)+"];\n";
-                
-                rank2 += contenido->XY+";";
-                if(contenido->siguiente != NULL){
-                    line1 += contenido->XY + " -> " + contenido->siguiente->XY + " -> " + contenido->XY +";\n";
-                }
+                line1 += contenido->XY +"[label=\""+contenido->RGB+"\" pos=\""+to_string(contenido->x)+","+to_string(0-contenido->y)+"!\"];\n";
                 contenido = contenido->siguiente;
                 
             }
-            
-            rank2 += "}\n";
-            line1 += rank2;
-            line1 += auxiliar->XF + " -> " + auxiliar->siguienteC->XY+"\n";
             auxiliar = auxiliar->siguiente;
             
         }
-        ///
-        auxiliarC = columna;
-        while(auxiliarC != NULL){
-            line1 += auxiliarC->YC + " -> " + auxiliarC->abajoC->XY+";\n";
-            contenido = auxiliarC->abajoC;
-            while(contenido != NULL){
-                if(contenido->abajo != NULL){
-                    line1 += contenido->XY + " -> " + contenido->abajo->XY + " -> " + contenido->XY +";\n";
-                }
-                contenido =  contenido->abajo;
-            }
-            
-            
-            auxiliarC = auxiliarC->siguiente;
-        }
         
+        auxiliar = fila;
+        while(auxiliar != NULL){
+            if(auxiliar->siguienteC != NULL){
+                line1 += auxiliar->XF + " -> " + auxiliar->siguienteC->XY+";\n";
+            }
+            auxiliarC = columna;
+            //
+            while(columna != NULL){
+                if(columna->abajoC != NULL){
+                    line1 += columna->YC + " -> " + columna->abajoC->XY+";\n";
+                }
+                columna = columna->siguiente;
+            }
+            //
+            contenido = auxiliar->siguienteC;
+            while(contenido != NULL){
+                if(contenido->siguiente != NULL){
+                line1 += contenido->XY + " -> " + contenido->siguiente->XY + " -> " + contenido->XY+";\n";
+                }
+                if(contenido->abajo != NULL){
+                    line1 += contenido->XY + " -> " + contenido->abajo->XY + " -> "+ contenido->XY+";\n";
+                }
+                contenido = contenido->siguiente;
+            }
+           
+            auxiliar = auxiliar->siguiente;
+        }
+        ///
         
         //
         
@@ -286,10 +288,10 @@ public:
     void getGrafica(){
         string dot = "";
         dot += "digraph DISPERSA{\n";
-        dot += "rankdir = TB;";
-        dot += "node[shape=rectangle, height=0.5, width=1.7];\n";
+        //dot += "rankdir = TB;";
+        dot += "node[shape=box];\n";
         dot += "graph[nodesep = 0.5];\n";
-        dot += "header[label=\"MATRIX\" style=filled, fillcolor=firebrick1, group =1];\n";
+        dot += "header[label=\"MATRIX\" style=filled, fillcolor=firebrick1, pos=\"0,0!\"];\n";
         //dot += graficarColumna(raizColumna);
         dot += graficar(raizFila,raizColumna);   
         dot += "}";
@@ -298,7 +300,7 @@ public:
         file.open("Dispersa.dot");
         file << dot;
         file.close();
-        system("cmd /c dot -Tjpg Dispersa.dot -o Dispersa.jpg");
+        system("cmd /c Neato -Tjpg Dispersa.dot -o Dispersa.jpg");
         system("cmd /c Dispersa.jpg");
 
         

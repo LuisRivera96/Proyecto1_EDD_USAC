@@ -25,6 +25,8 @@ using namespace std;
  */
 int main(int argc, char** argv) {
     Matriz m;
+    m.add(1,10,255,229,204);
+    m.add(2,10,6,229,204);
     m.add(15,10,255,229,204);
     m.add(3,6,255,229,204);
     m.add(5,2,255,229,204);
@@ -36,6 +38,7 @@ int main(int argc, char** argv) {
     m.add(15,1,255,229,204);
     m.add(15,2,255,229,204);
     m.add(15,3,255,229,204);
+    m.add(5,10,255,22,22);
     m.getGrafica();
     return 0;
 }
