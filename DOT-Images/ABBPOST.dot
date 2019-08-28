@@ -1,0 +1,12 @@
+digraph ABB{
+label="PostOrden";
+rankdir="LR";
+Alejandro;
+Alejandro -> Diego;
+Diego -> Manuel;
+Manuel -> Maria;
+Maria -> Teodoro;
+Teodoro -> Roberto;
+Roberto -> Pedro;
+Pedro -> Juan;
+Juan -> }

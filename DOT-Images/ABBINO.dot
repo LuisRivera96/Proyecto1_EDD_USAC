@@ -1,0 +1,9 @@
+digraph ABB{
+label="Inorden";
+rankdir="LR";
+Juan;
+Juan -> Luis;
+Luis -> Maria;
+Maria -> Mario;
+Mario -> Pedro;
+Pedro -> }
