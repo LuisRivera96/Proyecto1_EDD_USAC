@@ -10,7 +10,6 @@
 #include <fstream>
 #include <string>
 #include <string.h>
-
 #include "NodoABB.cpp"
 using namespace std;
 
@@ -34,30 +33,30 @@ public:
     }
     
     //INSERT//
-    void add(string name){
+    void add(string name,ListaM* cubo){
         if(raiz !=NULL){
-            return add_recursived(name,raiz);
+            return add_recursived(name,raiz,cubo);
         }else{
-            NodoABB* nuevo = new NodoABB(name);
+            NodoABB* nuevo = new NodoABB(name,cubo);
             raiz = nuevo;
             cout<<"Raiz agregada\n";
             
         }
     }
     
-    void add_recursived(string name,NodoABB* raiz){
+    void add_recursived(string name,NodoABB* raiz,ListaM* cubo){
         if(name.compare(raiz->getNombre()) < 0){
             if(raiz->getIzquierda() !=  NULL){
-                add_recursived(name,raiz->getIzquierda());
+                add_recursived(name,raiz->getIzquierda(),cubo);
             }else{
-                NodoABB* nuevo = new NodoABB(name);
+                NodoABB* nuevo = new NodoABB(name,cubo);
                 raiz->setIzquierda(nuevo);
             }
         }else if(name.compare(raiz->getNombre()) > 0){
             if(raiz->getDerecha() != NULL){
-                add_recursived(name,raiz->getDerecha());
+                add_recursived(name,raiz->getDerecha(),cubo);
             }else{
-                NodoABB* nuevo = new NodoABB(name);
+                NodoABB* nuevo = new NodoABB(name,cubo);
                 raiz->setDerecha(nuevo);
             }
         }else{
@@ -66,11 +65,17 @@ public:
         }
     }
     //BUSCAR//
-    void Busqueda(string image,NodoABB* raiz){
+    ListaM* BusquedaI(string image){
+        return Busqueda(image,raiz);
+    }
+    
+    ListaM* Busqueda(string image,NodoABB* raiz){
         if(raiz == NULL){
             cout<<"No existe la Imagen\n";
+            return NULL;
         }else if(image.compare(raiz->getNombre()) == 0){
             cout<<raiz->getNombre()<<"\n";
+            return raiz->getCubo();
         }else if(image.compare(raiz->getNombre()) < 0){
             Busqueda(image,raiz->getIzquierda());
         }else{
@@ -114,7 +119,7 @@ public:
         dot += "rankdir=\"LR\";\n";
         dot += gInorden(raiz);   
         dot += "}";
-        cout << dot;
+       // cout << dot;
         ofstream file;
         file.open("ABBINO.dot");
         file << dot;
@@ -159,7 +164,7 @@ public:
         dot += "rankdir=\"LR\";\n";
         dot += gPostorden(raiz);   
         dot += "}";
-        cout << dot;
+       // cout << dot;
         ofstream file;
         file.open("ABBPOST.dot");
         file << dot;
@@ -206,7 +211,7 @@ public:
         dot += "rankdir=\"LR\";\n";
         dot += gPreorden(raiz);   
         dot += "}";
-        cout << dot;
+       // cout << dot;
         ofstream file;
         file.open("ABBPRE.dot");
         file << dot;
@@ -249,7 +254,7 @@ public:
         dot += "node[shape=\"Mrecord\"];\n";
         dot += graficar(raiz);   
         dot += "}";
-        cout << dot;
+        //cout << dot;
         ofstream file;
         file.open("ABB.dot");
         file << dot;

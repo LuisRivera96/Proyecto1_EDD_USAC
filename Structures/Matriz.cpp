@@ -30,7 +30,7 @@ public:
         
         if(raizFila == NULL){
             raizFila = new NodoFila(fila);
-            cout << "Primer ValorF\n";
+           // cout << "Primer ValorF\n";
         }else{
             NodoFila *cola = raizFila;
             
@@ -43,7 +43,7 @@ public:
                 nuevo->siguiente = raizFila;
                 raizFila->anterior = nuevo;
                 raizFila = nuevo;
-                cout <<"Se inserto al principio\n";
+             //   cout <<"Se inserto al principio\n";
             }else{
                 anterior->siguiente = nuevo;
                 nuevo->anterior = anterior;
@@ -52,7 +52,7 @@ public:
                     nuevo->siguiente = cola;
                     cola->anterior = nuevo;
                 }
-                cout<<"Se inserto en Fila\n";
+              //  cout<<"Se inserto en Fila\n";
             }
         }
         
@@ -64,7 +64,7 @@ public:
         
         if(raizColumna == NULL){
             raizColumna = new NodoColumna(columna);
-            cout<<"Se inserto PrimeraColumna\n";
+          //  cout<<"Se inserto PrimeraColumna\n";
         }else{
             NodoColumna *cola = raizColumna;
             
@@ -77,7 +77,7 @@ public:
                 nuevo->siguiente = raizColumna;
                 raizColumna->anterior = nuevo;
                 raizColumna = nuevo;
-                cout<<"Se insertoC al principio\n";
+              //  cout<<"Se insertoC al principio\n";
             }else{
                 anterior->siguiente = nuevo;
                 nuevo->anterior = anterior;
@@ -86,7 +86,7 @@ public:
                     nuevo->siguiente = cola;
                     cola->anterior = nuevo;
                 }
-                cout<<"Se insertoColumna\n";
+                //cout<<"Se insertoColumna\n";
             }
         }
     }
@@ -96,7 +96,7 @@ public:
         
         if (fila->siguienteC == NULL){
             fila->siguienteC = nuevo;
-            cout<<"Se inserto ContenidoF\n";
+            //cout<<"Se inserto ContenidoF\n";
             return fila->siguienteC;
         }else{
             NodoContenido *cola =  fila->siguienteC;
@@ -111,7 +111,7 @@ public:
                 nuevo->siguiente = fila->siguienteC;
                 fila->siguienteC->anterior = nuevo;
                 fila->siguienteC = nuevo;
-                cout<<"Se inserto Contenido al Principio\n";
+              //  cout<<"Se inserto Contenido al Principio\n";
             }else{
                 temporal->siguiente = nuevo;
                 nuevo->anterior = temporal;
@@ -120,7 +120,7 @@ public:
                     nuevo->siguiente = cola;
                     cola->anterior = temporal;
                 }
-                cout<<"Se inserto nodo Contenido\n";
+               // cout<<"Se inserto nodo Contenido\n";
             }
         }
         return nuevo;
@@ -130,7 +130,7 @@ public:
         
         if(columna->abajoC == NULL){
             columna->abajoC = nuevo;
-            cout<<"Se inserto NuevoContenidoC\n";
+            //cout<<"Se inserto NuevoContenidoC\n";
         }else{
             NodoContenido *cFinal = columna->abajoC;
             NodoContenido *cAnterior = NULL;
@@ -144,7 +144,7 @@ public:
                 nuevo->abajo = columna->abajoC;
                 columna->abajoC->arriba = nuevo;
                 columna->abajoC = nuevo;
-                cout<<"Se inserto Nuevo ContenidoC al inicio\n";
+               // cout<<"Se inserto Nuevo ContenidoC al inicio\n";
             }else{
                 cAnterior->abajo = nuevo;
                 nuevo->arriba = cAnterior;
@@ -153,7 +153,7 @@ public:
                     nuevo->abajo = cFinal;
                     cFinal->arriba = nuevo;
                 }
-                cout<<"Se inserto nuevo ContenidoC\n";
+                //cout<<"Se inserto nuevo ContenidoC\n";
             }
         }
     }
@@ -182,6 +182,27 @@ public:
     }
     
     void add(int x,int y,int R,int G,int B){
+        //SI YA EXISTE EL NODO SE SOBREESCRIBE SU DATO
+        if(obtenerFila(y)!= NULL && obtenerColumna(x) != NULL){
+            NodoFila* f_selec = raizFila;
+            NodoContenido* contenidoC = raizFila->siguienteC;
+            while(f_selec != NULL){
+                contenidoC = f_selec->siguienteC;
+                while(contenidoC != NULL){
+                    if(contenidoC->x == x && contenidoC->y == y){
+                        contenidoC->R = R;
+                        contenidoC->G = G;
+                        contenidoC->B = B;
+                        contenidoC->RGB = to_string(R)+"-"+to_string(G)+"-"+to_string(B);
+                    }
+                    contenidoC = contenidoC->siguiente;
+                }
+                f_selec = f_selec->siguiente;
+            }
+            
+            
+         // SI NO EXISTE EL NODO   
+        }else{
         
         if(obtenerFila(y) == NULL){
             insertarFila(y);
@@ -196,6 +217,8 @@ public:
         NodoContenido* nuevo = NULL;
         nuevo = insertarContenidoFila(R,G,B,x,y,f_seleccionada);
         insertarContenidoColumna(c_seleccionada,nuevo);;
+        }
+        
     }
     
     
@@ -298,7 +321,7 @@ public:
         //dot += graficarColumna(raizColumna);
         dot += graficar(raizFila,raizColumna);   
         dot += "}";
-        cout << dot;
+        //cout << dot;
         ofstream file;
         file.open("Dispersa.dot");
         file << dot;

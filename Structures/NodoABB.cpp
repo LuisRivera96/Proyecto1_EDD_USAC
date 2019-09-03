@@ -8,7 +8,7 @@
 #include <string>
 #include <string.h>
 //
-//#include "Matriz.cpp"
+#include "ListaM.cpp"
 //
 using namespace std;
 
@@ -16,15 +16,15 @@ class NodoABB{
 private:
     NodoABB* izquierda;
     NodoABB* derecha;
-   // Matriz* cubo;
+    ListaM* cubo;
     string NombreImagen;
     
 public:
     
-    NodoABB(string nombre){
+    NodoABB(string nombre,ListaM* cubo){
         izquierda = NULL;
         derecha = NULL;
-//        cubo = NULL;
+        this->cubo = cubo;
         NombreImagen = nombre;
     }
     
@@ -35,9 +35,9 @@ public:
     NodoABB* getIzquierda(){
         return this->izquierda;
     }
-  /*  Matriz* getMatriz(){
+    ListaM* getCubo(){
         return this->cubo;
-    }*/
+    }
     string getNombre(){
         return this->NombreImagen;
     }
@@ -48,9 +48,9 @@ public:
     void setIzquierda(NodoABB* izquierda){
         this->izquierda = izquierda;
     }
-  /*  void setMatriz(Matriz* matriz){
+    void setCubo(ListaM* matriz){
         this->cubo = matriz;
-    }*/
+    }
     void setNombre(string nombre){
         this->NombreImagen = nombre;
     }

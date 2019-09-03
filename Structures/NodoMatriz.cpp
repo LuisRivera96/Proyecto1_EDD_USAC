@@ -22,12 +22,18 @@ public:
     int y;
     string RGB;
     string XY;
+    int R;
+    int G;
+    int B;
     
     NodoContenido(int R,int G, int B,int x, int y){
         RGB = to_string(R)+"-"+to_string(G)+"-"+to_string(B);
         XY = "X"+to_string(x)+"Y"+to_string(y);
         this->x = x;
         this->y = y;
+        this->R = R;
+        this->G = G;
+        this->B = B;
         siguiente = NULL;
         anterior = NULL;
         abajo = NULL;
