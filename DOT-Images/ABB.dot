@@ -1,17 +1,14 @@
 digraph ABB{
 compound=true;
 node[shape="Mrecord"];
-Juan:fJuan[id=Juan, color="blue"]; 
-Juan[label=" <NJuanI>  | <fJuan> Juan\n | <fJuanD> " shape="record"];
-"Juan" : NJuanI ->  Diego:fDiego[id=Diego, color="blue"]; 
-Diego[label=" <NDiegoI>  | <fDiego> Diego\n | <fDiegoD> " shape="record"];
-"Diego" : NDiegoI ->  Alejandro:fAlejandro[id=Alejandro, color="blue" shape="rectangle"]; 
-"Juan" : fJuanD ->  Pedro:fPedro[id=Pedro, color="blue"]; 
-Pedro[label=" <NPedroI>  | <fPedro> Pedro\n | <fPedroD> " shape="record"];
-"Pedro" : NPedroI ->  Maria:fMaria[id=Maria, color="blue"]; 
-Maria[label=" <NMariaI>  | <fMaria> Maria\n | <fMariaD> " shape="record"];
-"Maria" : NMariaI ->  Manuel:fManuel[id=Manuel, color="blue" shape="rectangle"]; 
-"Pedro" : fPedroD ->  Roberto:fRoberto[id=Roberto, color="blue"]; 
-Roberto[label=" <NRobertoI>  | <fRoberto> Roberto\n | <fRobertoD> " shape="record"];
-"Roberto" : fRobertoD ->  Teodoro:fTeodoro[id=Teodoro, color="blue" shape="rectangle"]; 
+Mario3:fMario3[id=Mario3, color="blue"]; 
+Mario3[label=" <NMario3I>  | <fMario3> Mario3\n | <fMario3D> " shape="record"];
+"Mario3" : NMario3I ->  Mario2:fMario2[id=Mario2, color="blue"]; 
+Mario2[label=" <NMario2I>  | <fMario2> Mario2\n | <fMario2D> " shape="record"];
+"Mario2" : NMario2I ->  Mario:fMario[id=Mario, color="blue"]; 
+Mario[label=" <NMarioI>  | <fMario> Mario\n | <fMarioD> " shape="record"];
+"Mario" : NMarioI ->  Doctor:fDoctor[id=Doctor, color="blue"]; 
+Doctor[label=" <NDoctorI>  | <fDoctor> Doctor\n | <fDoctorD> " shape="record"];
+"Doctor" : NDoctorI ->  Armando:fArmando[id=Armando, color="blue" shape="rectangle"]; 
+"Mario3" : fMario3D ->  Mario4:fMario4[id=Mario4, color="blue" shape="rectangle"]; 
 }

@@ -1,12 +1,10 @@
 digraph ABB{
 label="PreOrden";
 rankdir="LR";
-Juan;
-Juan -> Diego;
-Diego -> Alejandro;
-Alejandro -> Pedro;
-Pedro -> Maria;
-Maria -> Manuel;
-Manuel -> Roberto;
-Roberto -> Teodoro;
-Teodoro -> }
+Mario3;
+Mario3 -> Mario2;
+Mario2 -> Mario;
+Mario -> Doctor;
+Doctor -> Armando;
+Armando -> Mario4;
+Mario4 -> }

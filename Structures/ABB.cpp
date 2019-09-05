@@ -33,30 +33,30 @@ public:
     }
     
     //INSERT//
-    void add(string name,ListaM* cubo){
+    void add(string name,ListaM* cubo,int imageW,int imageH,int pixelW,int pixelH){
         if(raiz !=NULL){
-            return add_recursived(name,raiz,cubo);
+            return add_recursived(name,raiz,cubo,imageW,imageH,pixelW,pixelH);
         }else{
-            NodoABB* nuevo = new NodoABB(name,cubo);
+            NodoABB* nuevo = new NodoABB(name,cubo,imageW,imageH,pixelW,pixelH);
             raiz = nuevo;
             cout<<"Raiz agregada\n";
             
         }
     }
     
-    void add_recursived(string name,NodoABB* raiz,ListaM* cubo){
+    void add_recursived(string name,NodoABB* raiz,ListaM* cubo,int imageW,int imageH,int pixelW,int pixelH){
         if(name.compare(raiz->getNombre()) < 0){
             if(raiz->getIzquierda() !=  NULL){
-                add_recursived(name,raiz->getIzquierda(),cubo);
+                add_recursived(name,raiz->getIzquierda(),cubo,imageW,imageH,pixelW,pixelH);
             }else{
-                NodoABB* nuevo = new NodoABB(name,cubo);
+                NodoABB* nuevo = new NodoABB(name,cubo,imageW,imageH,pixelW,pixelH);
                 raiz->setIzquierda(nuevo);
             }
         }else if(name.compare(raiz->getNombre()) > 0){
             if(raiz->getDerecha() != NULL){
-                add_recursived(name,raiz->getDerecha(),cubo);
+                add_recursived(name,raiz->getDerecha(),cubo,imageW,imageH,pixelW,pixelH);
             }else{
-                NodoABB* nuevo = new NodoABB(name,cubo);
+                NodoABB* nuevo = new NodoABB(name,cubo,imageW,imageH,pixelW,pixelH);
                 raiz->setDerecha(nuevo);
             }
         }else{

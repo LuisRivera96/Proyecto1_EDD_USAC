@@ -183,26 +183,7 @@ public:
     
     void add(int x,int y,int R,int G,int B){
         //SI YA EXISTE EL NODO SE SOBREESCRIBE SU DATO
-        if(obtenerFila(y)!= NULL && obtenerColumna(x) != NULL){
-            NodoFila* f_selec = raizFila;
-            NodoContenido* contenidoC = raizFila->siguienteC;
-            while(f_selec != NULL){
-                contenidoC = f_selec->siguienteC;
-                while(contenidoC != NULL){
-                    if(contenidoC->x == x && contenidoC->y == y){
-                        contenidoC->R = R;
-                        contenidoC->G = G;
-                        contenidoC->B = B;
-                        contenidoC->RGB = to_string(R)+"-"+to_string(G)+"-"+to_string(B);
-                    }
-                    contenidoC = contenidoC->siguiente;
-                }
-                f_selec = f_selec->siguiente;
-            }
-            
-            
-         // SI NO EXISTE EL NODO   
-        }else{
+        
         
         if(obtenerFila(y) == NULL){
             insertarFila(y);
@@ -217,7 +198,7 @@ public:
         NodoContenido* nuevo = NULL;
         nuevo = insertarContenidoFila(R,G,B,x,y,f_seleccionada);
         insertarContenidoColumna(c_seleccionada,nuevo);;
-        }
+        
         
     }
     

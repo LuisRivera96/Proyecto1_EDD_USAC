@@ -18,12 +18,20 @@ private:
     NodoABB* derecha;
     ListaM* cubo;
     string NombreImagen;
+    int imageW;
+    int imageH;
+    int pixelW;
+    int pixelH;
     
 public:
     
-    NodoABB(string nombre,ListaM* cubo){
+    NodoABB(string nombre,ListaM* cubo,int imageW,int imageH,int pixelW,int pixelH){
         izquierda = NULL;
         derecha = NULL;
+        this->imageW = imageW;
+        this->imageH = imageH;
+        this->pixelW = pixelW;
+        this->pixelH = pixelH;
         this->cubo = cubo;
         NombreImagen = nombre;
     }
@@ -41,6 +49,18 @@ public:
     string getNombre(){
         return this->NombreImagen;
     }
+    int getImageW(){
+        return this->imageW;
+    }
+    int getImageH(){
+        return this->imageH;
+    }
+    int getPixelW(){
+        return this->pixelW;
+    }
+    int getPixelH(){
+        return this->pixelH;
+    }
     //SETS//
     void setDerecha(NodoABB* derecha){
         this->derecha = derecha;
@@ -54,5 +74,16 @@ public:
     void setNombre(string nombre){
         this->NombreImagen = nombre;
     }
-    
+    void setImageW(int W){
+        this->imageW = W;
+    }
+    void setImageH(int H){
+        this->imageH = H;
+    }
+    void setPixelW(int W){
+        this->pixelW = W;
+    }
+    void setPixelH(int H){
+        this->pixelH = H;
+    }
 };

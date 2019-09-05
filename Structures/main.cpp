@@ -24,6 +24,7 @@
 #include "ABB.cpp"
 #include "ListaFilters.cpp"
 #include "ListaM.cpp"
+#include "ListaLinealizacion.cpp"
 
 using namespace std;
 
@@ -35,7 +36,9 @@ ABB arbol;
 ListaM* cub;
 ListaFilters filters;
 Matriz* Capa;
-
+ListaLinealizacion* linea;
+int ImageW,ImageH = 0;
+int PixelW,PixelH = 0;
 //
 class Menus{
 public:
@@ -75,7 +78,7 @@ void cargaImagenes(){
                    //cout<<"F"<<fila<<endl;
                    if(fila == 4){
                        cout<<"config"<<endl;
-                       
+                       leerConfig(ruta,val[i]);
                    }else if(fila>4){
                        if(fila%2 != 0){
                            capa = val[i];
@@ -97,6 +100,47 @@ void cargaImagenes(){
        inicial.close();
        
 }
+}
+
+void leerConfig(string ruta,string config){
+    string archSalto = config.replace(config.size()-1,1,"");
+    string archInicial = ruta+"/"+archSalto;
+    string datos;
+    vector<string> val;
+    int fila = 1;
+       ifstream inicial(archInicial);
+       if(inicial.fail()){
+           cout<<"No existe la Carpeta o el Archivo\n";
+       }else{
+           
+           while(!inicial.eof()){
+               getline(inicial,datos);
+               val = split(datos,',');
+               for(int i= 0;i<val.size();i++){
+                  // cout<<val[i]<<endl;   
+                   //cout<<"F"<<fila<<endl;
+                   if(fila == 4){
+                      ImageW = stoi(val[i]); 
+                   }else if(fila == 6){
+                       ImageH = stoi(val[i]); 
+                   }else if(fila == 8){
+                       PixelW = stoi(val[i]);
+                   }else if(fila == 10){
+                       PixelH = stoi(val[i]);
+                   }
+                   
+                   fila++;
+
+               }
+               
+              
+               
+           }
+         
+       }
+       inicial.close();
+       
+
 }
 
 vector<string> split(string cadena,char delimiter){
@@ -202,7 +246,8 @@ void cargarCubo(string ruta,string capaM,string archivo){
         int cap = stoi(capaM);
         cub->addMatriz(cap, Capa);
         cout << "inserto a la lista\n";
-        arbol.add(ruta, cub);
+        cout<<"IW "<<ImageW<<" IH "<<ImageH<<" PW "<<PixelW<<" PH "<<PixelH<<endl;
+        arbol.add(ruta, cub,ImageW,ImageH,PixelW,PixelH);
         cout<<"se inseto al arbol \n";
         
 }
@@ -360,61 +405,38 @@ void matrixReport(){
                 cout << "1-- Filas\n";
                 cout << "2-- Columnas\n";
                 cin>>linealizacion;
+                linea = new ListaLinealizacion();
                 if(linealizacion.compare("1") == 0){
                     NodoFila* auxF = tempM->raizFila;
                     NodoContenido* auxC = auxF->siguienteC;
-                    dot = "";
-                    dot += "digraph FILAS{\n";
-                    dot += "compound=true;\n";
-                    dot += "rankdir=\"LR\";\n";
-                    dot += "label=\"Linealizacion Por Filas: Capa "+imagen+"\";\n";
-                    dot += "node[shape=\"rectangle\"];\n";
+                    
                     while(auxF != NULL){
                         auxC = auxF->siguienteC;
                         while(auxC != NULL){
-                            dot += auxC->XY+"[label=\"("+auxC->XY+") "+auxC->RGB+"\"];\n";
+                            linea->addLinealizacion(auxC->XY,auxC->RGB);
                             auxC = auxC->siguiente;
                         }
                         auxF = auxF->siguiente;
                     }
+                    linea->getGraficaL("FILAS",capaSelec);
                     
                     
-                    dot += "}";
-                    //cout << dot;
-                    ofstream file;
-                    file.open("LINEFILA.dot");
-                    file << dot;
-                    file.close();
-                    system("cmd /c dot -Tjpg LINEFILA.dot -o LINEFILA.jpg");
-                    system("cmd /c LINEFILA.jpg");
                 }else if(linealizacion.compare("2") == 0){
+                    linea = new ListaLinealizacion();
                     NodoColumna* auxC = tempM->raizColumna;
                     NodoContenido* auxContenido = auxC->abajoC;
-                    dot = "";
-                    dot += "digraph COLUMNAS{\n";
-                    dot += "compound=true;\n";
-                    dot += "rankdir=\"LR\";\n";
-                    dot += "label=\"Linealizacion Por Columnas: Capa "+imagen+"\";\n";
-                    dot += "node[shape=\"rectangle\"];\n";
                     while(auxC != NULL){
                         auxContenido = auxC->abajoC;
                         while(auxContenido != NULL){
-                            dot += auxContenido->XY+"[label=\"("+auxContenido->XY+") "+auxContenido->RGB+"\"];\n";
+                            linea->addLinealizacion(auxContenido->XY,auxContenido->RGB);
                             auxContenido = auxContenido->abajo;
                         }
                         auxC = auxC->siguiente;
                     }
+                    linea->getGraficaL("COLUMNAS",capaSelec);
                     
                     
                     
-                    dot += "}";
-                   // cout << dot;
-                    ofstream file;
-                    file.open("LINECOL.dot");
-                    file << dot;
-                    file.close();
-                    system("cmd /c dot -Tjpg LINECOL.dot -o LINECOL.jpg");
-                    system("cmd /c LINECOL.jpg");
                 }else{
                   cout<<"No existe esa Opcion\n"; 
                   matrixReport();  
