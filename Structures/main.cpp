@@ -21,6 +21,8 @@
 #include <vector>
 #include <sstream>
 #include <fstream>
+
+
 #include "ABB.cpp"
 #include "ListaFilters.cpp"
 #include "ListaM.cpp"
@@ -34,8 +36,10 @@ using namespace std;
 //
 ABB arbol;
 ListaM* cub;
+ListaM* cuboSeleccionado;
 ListaFilters filters;
 Matriz* Capa;
+NodoABB* nodoActual;
 ListaLinealizacion* linea;
 int ImageW,ImageH = 0;
 int PixelW,PixelH = 0;
@@ -62,7 +66,7 @@ void cargaImagenes(){
     cin>>ruta;
     string archInicial = ruta+"/"+ruta+".csv";
     if(ruta.compare("2") == 0){
-        system("cls");
+        system("cmd /c cls");
         menuP();
     }else {
        ifstream inicial(archInicial);
@@ -98,7 +102,8 @@ void cargaImagenes(){
          
        }
        inicial.close();
-       
+       cuboSeleccionado = arbol.BusquedaI(ruta);
+       nodoActual = arbol.ImageB(ruta);
 }
 }
 
@@ -260,8 +265,13 @@ void menuSelectImage(){
     cout<<"2 - BACK\n";
     cin>>entrada;
     if(entrada.compare("2") == 0){
-        system("cls");
+        system("cmd /c cls");
         menuP();
+    }else{
+         cuboSeleccionado = arbol.BusquedaI(entrada);
+         nodoActual = arbol.ImageB(entrada);
+         system("cmd /c cls");
+         menuP();
     }
     
 }
@@ -285,23 +295,23 @@ void menuReportes(){
             arbol.getGrafica();
             break;
         case 2:
-            system("cls");
+            system("cmd /c cls");
             menuLayer();
             break;
         case 3:
-            system("cls");
+            system("cmd /c cls");
             matrixReport();
             break;
         case 4:
             cout<<"Traversal Report.\n";
-            system("cls");
+            system("cmd /c cls");
             menuTraversal();
             break;
         case 5:
             cout<<"Filters Report.\n";
             break;
         case 6:
-            system("cls");
+            system("cmd /c cls");
             menuP();
             break;
         default:
@@ -325,7 +335,7 @@ void menuLayer(){
         menuReportes();
     }else{
         ListaM* temporal = arbol.BusquedaI(imagen);
-        system("cls");
+        system("cmd /c cls");
         NodoListaM* temp = temporal->getInicio();
         while(temp != NULL){
             cout<<"--"<<temp->getCapa()<<endl;
@@ -335,33 +345,25 @@ void menuLayer(){
         cin>>capaSelec;
 //GRAFICAR COMPLETA
         if(capaSelec.compare("C") == 0 || capaSelec.compare("c") == 0){
-            Matriz* unido = new Matriz();
+            //Matriz* unido = new Matriz();
+            int contI = 0;
             temp = temporal->getInicio();
             Matriz* temporalM = new Matriz();
             while(temp != NULL){
                 
                 temporalM = temp->getMatriz();
-                NodoFila* fila = temporalM->raizFila;
-                NodoContenido* contenido = fila->siguienteC;
-                while(fila != NULL){
-                    contenido = fila->siguienteC;
-                    while(contenido != NULL){
-                        unido->add(contenido->x,contenido->y,contenido->R,contenido->G,contenido->B);
-                        contenido = contenido->siguiente;
-                    }
-                    fila = fila->siguiente;
-                }
-                
                 temp = temp->getSiguiente();
+                contI++;
+                temporalM->getGrafica(to_string(contI));
             }
-            unido->getGrafica();
+            
             
 //GRAFICAR CAPA UNICA     
         }else{
             
             Matriz* tempM = temporal->buscar(capaSelec);
             if(tempM != NULL){
-              tempM->getGrafica();
+              tempM->getGrafica(capaSelec);
             }else{
                 menuLayer();
      
@@ -385,7 +387,7 @@ void matrixReport(){
         menuReportes();
     }else{
         ListaM* temporal = arbol.BusquedaI(imagen);
-        system("cls");
+        system("cmd /c cls");
         cout << "=========================LISTA DE CAPAS DE LA IMAGEN=============================\n";
         NodoListaM* temp = temporal->getInicio();
         while(temp != NULL){
@@ -398,7 +400,7 @@ void matrixReport(){
                 //tempM->getGrafica();
                 matrixReport();
             } else {
-                system("cls");
+                system("cmd /c cls");
                 string dot = "";
                 
                 cout << "=========================FORMA DE LINEALIZACION=============================\n";
@@ -462,24 +464,24 @@ void menuTraversal(){
         case 1:
             cout<<"Inorden Report.\n";
             arbol.getGraphIno();
-            system("cls");
+            system("cmd /c cls");
             menuTraversal();
             break;
         case 2:
             cout<<"Postorden Report.\n";
             arbol.getGraphPost();
-            system("cls");
+            system("cmd /c cls");
             menuTraversal();
             break;
         case 3:
             cout<<"Preorden Report.\n";
             arbol.getGraphPre();
-            system("cls");
+            system("cmd /c cls");
             menuTraversal();
             break;
         case 4:
             cout<<"BACK\n";
-            system("cls");
+            system("cmd /c cls");
             menuReportes();
             break;
         default:
@@ -488,6 +490,131 @@ void menuTraversal(){
         
     }
 }
+
+//EXPORTAR IMAGEN
+void exportImage(){
+    int reporte;
+    string filterS;
+    cout<<"===========================EXPORT IMAGE==============================\n";
+    cout<<"1 - Exportar OG Image.\n";
+    cout<<"2 - Filters.\n";
+    cout<<"3 - BACK.\n";
+    cin>>reporte;
+    switch(reporte){
+        case 1:
+            exportArchivos(to_string(reporte));
+            system("cmd /c cls");
+            menuP();
+            break;
+        case 2:
+            system("cmd /c cls");
+            cout<<"Menu Seleccion Filtro a Exportar.\n";
+            cout << "===========================SELECT FILTERS EXPORT==============================\n";
+            filters.listFilters();
+            cout << "2 - BACK.\n";
+            cin>>filterS;
+            system("cmd /c cls");
+            menuP();
+            break;
+        case 3:
+            cout<<"BACK\n";
+            system("cmd /c cls");
+            menuP();
+            break;
+        default:
+            cout<<"Error ingrese una opcion correcta\n";
+            break;
+        
+    }
+}
+
+void exportArchivos(string opcion){
+    if(opcion.compare("1") == 0){
+        NodoListaM* temp = cuboSeleccionado->getInicio();
+        Matriz* temporalM = new Matriz();
+        //cout<<"n "<<nodoActual->getNombre()<<endl;
+        int pixelT = nodoActual->getImageW()*nodoActual->getImageH();
+        string creacionHTML = "Exports/"+nodoActual->getNombre()+".html";
+        string creacionCSS = "Exports/template.css";
+        
+        //HTML
+        ofstream file;
+        file.open(creacionHTML);
+        file << "<!DOCTYPE html>\n";
+        file << "<html>\n";
+        file << "<head>\n";
+        file << "<link rel=\"stylesheet\" href=\"template.css\">\n";
+        file << "</head>\n";
+        file << "</head>\n";
+        file << "<body>\n";
+        file << "<div class=\"canvas\">\n";
+        for(int i=0; i<pixelT; i++){
+            file << "<div class=\"pixel\"></div>\n";
+        }
+        file << "</div>\n";
+        file << "</body>\n";
+        file << "</html>\n";
+        file.close();
+        //CSS
+        ofstream file2;
+        file2.open(creacionCSS);
+        file2 << "body {\n background :#333333;\nheight : 100vh;\ndisplay: flex;\njustify-content : center;\nalign-items : center;\n}\n";
+        file2 << ".canvas {\n";
+        file2 << "width: "+to_string(nodoActual->getImageH()*nodoActual->getPixelH())+"px;\n";
+        file2 << "height: "+to_string(nodoActual->getImageH()*nodoActual->getPixelH())+"px;\n";
+        file2 << "}\n";
+        file2 << ".pixel {\n";
+        file2 << "width: "+to_string(nodoActual->getPixelW())+"px;\n";
+        file2 << "height: "+to_string(nodoActual->getPixelH())+"px;\n";
+        file2 << "float: left;\n";
+        file2 << "box-shadow: 0px 0px 1px #fff;";
+        file2 << "}\n";
+        while(temp != NULL){
+            temporalM = temp->getMatriz();
+            NodoFila* fila = temporalM->raizFila;
+            NodoContenido* contenido = fila->siguienteC;
+            while(fila != NULL){
+                contenido = fila->siguienteC;
+                while(contenido != NULL){
+                    file2 << ".pixel:nth-child("+to_string((contenido->y-1)*nodoActual->getImageW()+contenido->x)+"){background: "+Hex(contenido->R,contenido->G,contenido->B)+";}\n";
+                    contenido = contenido->siguiente;
+                }
+                fila =  fila->siguiente;
+            }
+            temp = temp->getSiguiente();
+        }
+        file2.close();
+        
+    }else if(opcion.compare("2") == 0){
+        
+    }
+}
+//RGB A HEXADECIMAL
+string RGBtoHex(int dec){
+    if(dec < 1) return "00";
+    
+    int hex = dec;
+    string hexStr = "";
+    while(dec > 0){
+        hex = dec % 16;
+        if(hex < 10)
+            hexStr = hexStr.insert(0,string(1,(hex+48)));
+        else
+            hexStr = hexStr.insert(0,string(string(1,(hex+55))));
+        
+        dec /= 16;
+    }
+    
+    return hexStr;
+}
+string Hex(int R, int G,int B){
+    string rs = RGBtoHex(R);
+    string gs = RGBtoHex(G);
+    string bs = RGBtoHex(B);
+    return '#'+rs+gs+bs;
+}
+//
+//
 
 void menuP(){
     string opcion;
@@ -518,12 +645,12 @@ void menuP(){
          
          switch(numero){
              case 1:
-                system("cls");
+                system("cmd /c cls");
                 menuCarga();
                 break;
              case 2:
                  cout<<"Select Image\n";
-                 system("cls");
+                 system("cmd /c cls");
                  menuSelectImage();
                  break;
              case 3:
@@ -534,10 +661,12 @@ void menuP(){
                  break;
              case 5:
                  cout<<"Export Image\n";
+                 system("cmd /c cls");
+                 exportImage();
                  break;
              case 6:
                  cout<<"Reports\n";
-                 system("cls");
+                 system("cmd /c cls");
                  menuReportes();
                  break;
              case 7:

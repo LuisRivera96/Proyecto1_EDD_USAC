@@ -74,8 +74,25 @@ public:
             cout<<"No existe la Imagen\n";
             return NULL;
         }else if(image.compare(raiz->getNombre()) == 0){
-            cout<<raiz->getNombre()<<"\n";
+            //cout<<raiz->getNombre()<<"\n";
             return raiz->getCubo();
+        }else if(image.compare(raiz->getNombre()) < 0){
+            Busqueda(image,raiz->getIzquierda());
+        }else{
+            Busqueda(image,raiz->getDerecha());
+        }
+    }
+    
+    NodoABB* ImageB(string image){
+        return ImageBR(image,raiz);
+    }
+    NodoABB* ImageBR(string image,NodoABB* raiz){
+        if(raiz == NULL){
+            cout<<"No existe la Imagen\n";
+            return NULL;
+        }else if(image.compare(raiz->getNombre()) == 0){
+            //cout<<raiz->getNombre()<<"\n";
+            return raiz;
         }else if(image.compare(raiz->getNombre()) < 0){
             Busqueda(image,raiz->getIzquierda());
         }else{

@@ -292,8 +292,13 @@ public:
     
     
     
-    void getGrafica(){
+    void getGrafica(string Imagen){
         string dot = "";
+        string creacionI = "cmd /c Neato -Tjpg Dispersa"+Imagen+".dot -o Dispersa"+Imagen+".jpg";
+        string comandoI = "cmd /c Dispersa"+Imagen+".jpg";
+        char* creI = (char*)creacionI.c_str();
+        char*  comaI = (char*)comandoI.c_str();
+        string fileI = "Dispersa"+Imagen+".dot";
         dot += "digraph DISPERSA{\n";
         //dot += "rankdir = TB;";
         dot += "node[shape=box];\n";
@@ -304,11 +309,11 @@ public:
         dot += "}";
         //cout << dot;
         ofstream file;
-        file.open("Dispersa.dot");
+        file.open(fileI);
         file << dot;
         file.close();
-        system("cmd /c Neato -Tjpg Dispersa.dot -o Dispersa.jpg");
-        system("cmd /c Dispersa.jpg");
+        system(creI);
+        system(comaI);
 
         
     }

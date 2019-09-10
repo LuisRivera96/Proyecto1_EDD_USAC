@@ -58,6 +58,15 @@ public:
         
     }
     
+    
+    void listFilters(){
+        NodoFilters* temp = inicio;
+        while(temp != NULL){
+            cout<<"--"+temp->getFilter()+"\n";
+            temp = temp->getSiguiente();
+        }
+    }
+    
     void getGraphFilters(){
         string dot = "";
         dot += "digraph FILTERS{\n";
