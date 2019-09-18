@@ -83,6 +83,7 @@ public:
         }
     }
     
+    
     NodoABB* ImageB(string image){
         return ImageBR(image,raiz);
     }
@@ -94,9 +95,9 @@ public:
             //cout<<raiz->getNombre()<<"\n";
             return raiz;
         }else if(image.compare(raiz->getNombre()) < 0){
-            Busqueda(image,raiz->getIzquierda());
+            ImageBR(image,raiz->getIzquierda());
         }else{
-            Busqueda(image,raiz->getDerecha());
+            ImageBR(image,raiz->getDerecha());
         }
     }
     //RECORRIDOS//

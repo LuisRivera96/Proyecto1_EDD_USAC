@@ -1,14 +1,7 @@
 digraph ABB{
 compound=true;
 node[shape="Mrecord"];
-Mario3:fMario3[id=Mario3, color="blue"]; 
-Mario3[label=" <NMario3I>  | <fMario3> Mario3\n | <fMario3D> " shape="record"];
-"Mario3" : NMario3I ->  Mario2:fMario2[id=Mario2, color="blue"]; 
-Mario2[label=" <NMario2I>  | <fMario2> Mario2\n | <fMario2D> " shape="record"];
-"Mario2" : NMario2I ->  Mario:fMario[id=Mario, color="blue"]; 
-Mario[label=" <NMarioI>  | <fMario> Mario\n | <fMarioD> " shape="record"];
-"Mario" : NMarioI ->  Doctor:fDoctor[id=Doctor, color="blue"]; 
-Doctor[label=" <NDoctorI>  | <fDoctor> Doctor\n | <fDoctorD> " shape="record"];
-"Doctor" : NDoctorI ->  Armando:fArmando[id=Armando, color="blue" shape="rectangle"]; 
-"Mario3" : fMario3D ->  Mario4:fMario4[id=Mario4, color="blue" shape="rectangle"]; 
+Letra:fLetra[id=Letra, color="blue"]; 
+Letra[label=" <NLetraI>  | <fLetra> Letra\n | <fLetraD> " shape="record"];
+"Letra" : fLetraD ->  Mario:fMario[id=Mario, color="blue" shape="rectangle"]; 
 }

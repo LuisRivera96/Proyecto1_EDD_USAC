@@ -6,6 +6,8 @@
 
 #include <iostream>
 #include <fstream>
+#include <sstream>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string>
 #include <string.h>
@@ -61,10 +63,11 @@ public:
     
     void listFilters(){
         NodoFilters* temp = inicio;
-        while(temp != NULL){
-            cout<<"--"+temp->getFilter()+"\n";
-            temp = temp->getSiguiente();
-        }
+        do{
+           cout<<"--"+temp->getFilter()+"\n";
+           temp = temp->getSiguiente(); 
+        }while(temp != inicio);
+        
     }
     
     void getGraphFilters(){

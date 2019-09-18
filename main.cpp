@@ -37,7 +37,8 @@ using namespace std;
 ABB arbol;
 ListaM* cub;
 ListaM* cuboSeleccionado;
-ListaFilters filters;
+ListaM* filtroS;
+ListaFilters* filters;
 Matriz* Capa;
 NodoABB* nodoActual;
 ListaLinealizacion* linea;
@@ -51,7 +52,7 @@ void menuCarga(){
     cargaImagenes();
     
 }
-
+//METODO QUE CARGA LA IMAGEN A TRAVES DE ARCHIVOS .CSV Y LOS AGREGA POR CAPAS A UNA LISTA LA CUAL SE INGRESA A UN NODO ARBOL
 void cargaImagenes(){
     string ruta;
     string datos;
@@ -102,11 +103,10 @@ void cargaImagenes(){
          
        }
        inicial.close();
-       cuboSeleccionado = arbol.BusquedaI(ruta);
-       nodoActual = arbol.ImageB(ruta);
+       
 }
 }
-
+//METODO QUE RECORRE EL ARCHVIDO DE CONFIG.CSV PARA PODER SACAR SUS DATOS
 void leerConfig(string ruta,string config){
     string archSalto = config.replace(config.size()-1,1,"");
     string archInicial = ruta+"/"+archSalto;
@@ -147,7 +147,7 @@ void leerConfig(string ruta,string config){
        
 
 }
-
+//VECTOR PARA PODER RECORRER DATOS DE UN ARCHIVO
 vector<string> split(string cadena,char delimiter){
     stringstream ss(cadena);
     string item;
@@ -158,7 +158,7 @@ vector<string> split(string cadena,char delimiter){
     return splittedStrings;
 }
 
-
+//METODO QUE RECIBE LOS CSV Y AGREGA EN CAPAS  LAS CUALES SE VAN AGREGANDO A UNA LISTA DE CAPAS
 void cargarCubo(string ruta,string capaM,string archivo){
 
         string cadena = "";
@@ -257,7 +257,7 @@ void cargarCubo(string ruta,string capaM,string archivo){
         
 }
 
-
+//SELECCIONAR IMAGEN PARA TRABAJAR CON ELLA LOS FILTROS Y REPORTES
 void menuSelectImage(){
     string entrada;
     cout<<"=======================IMAGES===============================\n";
@@ -268,8 +268,10 @@ void menuSelectImage(){
         system("cmd /c cls");
         menuP();
     }else{
+        
          cuboSeleccionado = arbol.BusquedaI(entrada);
          nodoActual = arbol.ImageB(entrada);
+         filters = new ListaFilters();
          system("cmd /c cls");
          menuP();
     }
@@ -278,7 +280,7 @@ void menuSelectImage(){
 
 
 
-
+//MENU DE REPORTES
 void menuReportes(){
     int reporte;
     cout<<"===========================REPORTS==============================\n";
@@ -308,7 +310,9 @@ void menuReportes(){
             menuTraversal();
             break;
         case 5:
+            system("cmd /c cls");
             cout<<"Filters Report.\n";
+            filtersReport();
             break;
         case 6:
             system("cmd /c cls");
@@ -321,7 +325,7 @@ void menuReportes(){
     }
     
 }
-
+//MENU PARA VER LAS CAPAS GRAFICADAS POR GRAPHIZ
 void menuLayer(){
     string imagen;
     string capaSelec;
@@ -372,7 +376,7 @@ void menuLayer(){
         }
     }
 }
-
+//REPORTE DE LINEALZACION DE LA MATRIZ SELECCIONADA
 void matrixReport(){
     string imagen;
     string capaSelec;
@@ -491,7 +495,7 @@ void menuTraversal(){
     }
 }
 
-//EXPORTAR IMAGEN
+//EXPORTAR IMAGEN ORIGINAL O ALGUNO DE LOS FILTROS APLICADOS
 void exportImage(){
     int reporte;
     string filterS;
@@ -502,32 +506,48 @@ void exportImage(){
     cin>>reporte;
     switch(reporte){
         case 1:
+        {
             exportArchivos(to_string(reporte));
             system("cmd /c cls");
             menuP();
             break;
+        }
         case 2:
+        {
             system("cmd /c cls");
             cout<<"Menu Seleccion Filtro a Exportar.\n";
             cout << "===========================SELECT FILTERS EXPORT==============================\n";
-            filters.listFilters();
+            filters->listFilters();
             cout << "2 - BACK.\n";
             cin>>filterS;
-            system("cmd /c cls");
-            menuP();
+            if(filterS.compare("2") == 0){
+                system("cmd /c cls");
+                menuP();
+            }
+            NodoFilters* temporal = filters->getInicio();
+            do{
+                if(temporal->getFilter().compare(filterS) == 0){
+                    filtroS = temporal->getCubo();
+                }
+                temporal = temporal->getSiguiente();
+            }while(temporal != filters->getInicio());
+            exportArchivos(to_string(reporte));
             break;
+    }
         case 3:
+        {
             cout<<"BACK\n";
             system("cmd /c cls");
             menuP();
             break;
+        }
         default:
             cout<<"Error ingrese una opcion correcta\n";
             break;
         
     }
 }
-
+//EXPORTAR A HTML Y CSS IMAGEN SELECCIONADA
 void exportArchivos(string opcion){
     if(opcion.compare("1") == 0){
         NodoListaM* temp = cuboSeleccionado->getInicio();
@@ -535,7 +555,7 @@ void exportArchivos(string opcion){
         //cout<<"n "<<nodoActual->getNombre()<<endl;
         int pixelT = nodoActual->getImageW()*nodoActual->getImageH();
         string creacionHTML = "Exports/"+nodoActual->getNombre()+".html";
-        string creacionCSS = "Exports/template.css";
+        string creacionCSS = "Exports/"+nodoActual->getNombre()+".css";
         
         //HTML
         ofstream file;
@@ -543,7 +563,7 @@ void exportArchivos(string opcion){
         file << "<!DOCTYPE html>\n";
         file << "<html>\n";
         file << "<head>\n";
-        file << "<link rel=\"stylesheet\" href=\"template.css\">\n";
+        file << "<link rel=\"stylesheet\" href=\""+nodoActual->getNombre()+".css\">\n";
         file << "</head>\n";
         file << "</head>\n";
         file << "<body>\n";
@@ -586,13 +606,66 @@ void exportArchivos(string opcion){
         file2.close();
         
     }else if(opcion.compare("2") == 0){
+        NodoListaM* temp = filtroS->getInicio();
+        Matriz* temporalM = new Matriz();
+        //cout<<"n "<<nodoActual->getNombre()<<endl;
+        int pixelT = nodoActual->getImageW()*nodoActual->getImageH();
+        string creacionHTML = "Exports/"+nodoActual->getNombre()+".html";
+        string creacionCSS = "Exports/"+nodoActual->getNombre()+".css";
         
+        //HTML
+        ofstream file;
+        file.open(creacionHTML);
+        file << "<!DOCTYPE html>\n";
+        file << "<html>\n";
+        file << "<head>\n";
+        file << "<link rel=\"stylesheet\" href=\""+nodoActual->getNombre()+".css\">\n";
+        file << "</head>\n";
+        file << "</head>\n";
+        file << "<body>\n";
+        file << "<div class=\"canvas\">\n";
+        for(int i=0; i<pixelT; i++){
+            file << "<div class=\"pixel\"></div>\n";
+        }
+        file << "</div>\n";
+        file << "</body>\n";
+        file << "</html>\n";
+        file.close();
+        //CSS
+        ofstream file2;
+        file2.open(creacionCSS);
+        file2 << "body {\n background :#333333;\nheight : 100vh;\ndisplay: flex;\njustify-content : center;\nalign-items : center;\n}\n";
+        file2 << ".canvas {\n";
+        file2 << "width: "+to_string(nodoActual->getImageH()*nodoActual->getPixelH())+"px;\n";
+        file2 << "height: "+to_string(nodoActual->getImageH()*nodoActual->getPixelH())+"px;\n";
+        file2 << "}\n";
+        file2 << ".pixel {\n";
+        file2 << "width: "+to_string(nodoActual->getPixelW())+"px;\n";
+        file2 << "height: "+to_string(nodoActual->getPixelH())+"px;\n";
+        file2 << "float: left;\n";
+        file2 << "box-shadow: 0px 0px 1px #fff;";
+        file2 << "}\n";
+        while(temp != NULL){
+            temporalM = temp->getMatriz();
+            NodoFila* fila = temporalM->raizFila;
+            NodoContenido* contenido = fila->siguienteC;
+            while(fila != NULL){
+                contenido = fila->siguienteC;
+                while(contenido != NULL){
+                    file2 << ".pixel:nth-child("+to_string((contenido->y-1)*nodoActual->getImageW()+contenido->x)+"){background: "+Hex(contenido->R,contenido->G,contenido->B)+";}\n";
+                    contenido = contenido->siguiente;
+                }
+                fila =  fila->siguiente;
+            }
+            temp = temp->getSiguiente();
+        }
+        file2.close();
     }
 }
 //RGB A HEXADECIMAL
 string RGBtoHex(int dec){
     if(dec < 1) return "00";
-    
+    if(dec <10 ) return "0"+to_string(dec);
     int hex = dec;
     string hexStr = "";
     while(dec > 0){
@@ -614,8 +687,285 @@ string Hex(int R, int G,int B){
     return '#'+rs+gs+bs;
 }
 //
-//
-
+//APLICACION DE FILTROS(FUNCIONALIDAD DE LA APLICACION)
+void aplicarFilters(){
+    int filter;
+    cout<<"===========================FILTERS==============================\n";
+    cout<<"1 - Negativo.\n";
+    cout<<"2 - Grayscale.\n";
+    cout<<"3 - Mirrror.\n";
+    cout<<"4 - Collage.\n";
+    cout<<"5 - Mosaico.\n";
+    cout<<"6 - Regresar.\n";
+    cin>>filter;
+    switch(filter){
+        case 1:
+        {
+            int seleccion;
+            system("cmd /c cls");
+            cout<<"=======================NEGATIVO===========================\n";
+            cout<<"1 - Aplicar a toda la Imagen\n";
+            cout<<"2 - Aplicar a capa Individual\n";
+            cin>>seleccion;
+            ListaM* actual = cuboSeleccionado;
+            NodoListaM* temp = actual->getInicio();
+            Matriz* temporalM = new Matriz();
+            switch(seleccion){
+                case 1:
+                    
+                    while(temp != NULL){
+                        temporalM = temp->getMatriz();
+                        NodoFila* fila = temporalM->raizFila;
+                        NodoContenido* contenido = fila->siguienteC;
+                        while(fila != NULL){
+                            contenido = fila->siguienteC;
+                            while(contenido != NULL){
+                                int RN = 255 - contenido->R;
+                                int GN = 255 - contenido->G;
+                                int BN = 255 - contenido->B;
+                                contenido->RGB = to_string(RN)+"-"+to_string(GN)+"-"+to_string(BN);
+                                contenido->R = RN;
+                                contenido->G = GN;
+                                contenido->B = BN;
+                                
+                                contenido = contenido->siguiente;
+                            }
+                            fila = fila->siguiente;
+                        }
+                        temp = temp->getSiguiente();
+                    }
+                    filters->addFilter("NEGATIVO",actual);
+                    break;
+                
+            
+                case 2:
+                    system("cmd /c cls");
+                    int capaS;
+                    cout<<"=======================ELEGIR CAPA===========================\n";
+                    temp = cuboSeleccionado->getInicio();
+                    while(temp != NULL){
+                        cout<<"--"<<temp->getCapa()<<endl;
+                        temp =  temp->getSiguiente();
+                    }
+                    cin>>capaS;
+                    temp = cuboSeleccionado->getInicio();
+                    temporalM = new Matriz();
+                    while(temp != NULL){
+                        if(temp->getCapa() == capaS){
+                        temporalM = temp->getMatriz();
+                        NodoFila* fila = temporalM->raizFila;
+                        NodoContenido* contenido = fila->siguienteC;
+                        while(fila != NULL){
+                            contenido = fila->siguienteC;
+                            while(contenido != NULL){
+                                int RN = 255 - contenido->R;
+                                int GN = 255 - contenido->G;
+                                int BN = 255 - contenido->B;
+                                contenido->RGB = to_string(RN)+"-"+to_string(GN)+"-"+to_string(BN);
+                                contenido->R = RN;
+                                contenido->G = GN;
+                                contenido->B = BN;
+                                
+                                contenido = contenido->siguiente;
+                            }
+                            fila = fila->siguiente;
+                        }
+                    }
+                        temp = temp->getSiguiente();
+                    }
+                    filters->addFilter("NEGATIVO",actual);
+                    break;
+                
+                    
+                    
+                
+            }
+            break;
+    }
+        case 2:
+            {
+            int seleccion;
+            system("cmd /c cls");
+            cout<<"=======================GRAYSCALE===========================\n";
+            cout<<"1 - Aplicar a toda la Imagen\n";
+            cout<<"2 - Aplicar a capa Individual\n";
+            cin>>seleccion;
+            ListaM* actual = cuboSeleccionado;
+            NodoListaM* temp = actual->getInicio();
+            Matriz* temporalM = new Matriz();
+            switch(seleccion){
+                case 1:
+                    
+                    while(temp != NULL){
+                        temporalM = temp->getMatriz();
+                        NodoFila* fila = temporalM->raizFila;
+                        NodoContenido* contenido = fila->siguienteC;
+                        while(fila != NULL){
+                            contenido = fila->siguienteC;
+                            while(contenido != NULL){
+                                int RN = (int)contenido->R*0.33;
+                                int GN = (int)contenido->G*0.59;
+                                int BN = (int)contenido->B*0.11;
+                                contenido->RGB = to_string(RN)+"-"+to_string(GN)+"-"+to_string(BN);
+                                contenido->R = RN;
+                                contenido->G = GN;
+                                contenido->B = BN;
+                                
+                                contenido = contenido->siguiente;
+                            }
+                            fila = fila->siguiente;
+                        }
+                        temp = temp->getSiguiente();
+                    }
+                    filters->addFilter("GRAYSCALE",actual);
+                    break;
+                
+            
+                case 2:
+                    system("cmd /c cls");
+                    int capaS;
+                    cout<<"=======================ELEGIR CAPA===========================\n";
+                    temp = cuboSeleccionado->getInicio();
+                    while(temp != NULL){
+                        cout<<"--"<<temp->getCapa()<<endl;
+                        temp =  temp->getSiguiente();
+                    }
+                    cin>>capaS;
+                    temp = cuboSeleccionado->getInicio();
+                    temporalM = new Matriz();
+                    while(temp != NULL){
+                        if(temp->getCapa() == capaS){
+                        temporalM = temp->getMatriz();
+                        NodoFila* fila = temporalM->raizFila;
+                        NodoContenido* contenido = fila->siguienteC;
+                        while(fila != NULL){
+                            contenido = fila->siguienteC;
+                            while(contenido != NULL){
+                                int RN = (int)contenido->R*0.33;
+                                int GN = (int)contenido->G*0.59;
+                                int BN = (int)contenido->B*0.11;
+                                contenido->RGB = to_string(RN)+"-"+to_string(GN)+"-"+to_string(BN);
+                                contenido->R = RN;
+                                contenido->G = GN;
+                                contenido->B = BN;
+                                
+                                contenido = contenido->siguiente;
+                            }
+                            fila = fila->siguiente;
+                        }
+                    }
+                        temp = temp->getSiguiente();
+                    }
+                    filters->addFilter("GRAYSCALE",actual);
+                    break;
+                
+                    
+                    
+                
+            }
+            break;
+    }
+            break;
+        case 3:
+            cout<<"MIRROR\n";
+            break;
+        case 4:
+            cout<<"collage\n";
+            break;
+        case 5:
+            cout<<"MOSAICO\n";
+            break;
+        case 6:
+            system("cmd /c cls");
+            menuP();
+            break;
+        default:
+            cout<<"Ingrese una Opcion correcta\n";
+            system("cmd /c cls");
+            aplicarFilters();
+            break;
+    }
+}
+//Filters Report (MENU DE FILTROS APLICADOS EN DONDE SE GRAFICARA EL SELECCIONADO POR CAPA)
+void filtersReport(){
+   int reporte;
+   string filterS;
+   string capaSelec;
+   cout<<"==============================FILTER REPORT================================\n";
+   cout<<"1 - All Filters Report\n";
+   cout<<"2 - Individual Filter Report\n";
+   cout<<"3 - Regresar\n";
+   cin>>reporte;
+   switch(reporte){
+       case 1:
+       {
+           filters->getGraphFilters();
+           break;
+        }
+       case 2:
+       {
+           cout << "===========================SELECT FILTERS EXPORT==============================\n";
+           filters->listFilters();
+           cin>>filterS;
+           NodoFilters* temporal = filters->getInicio();
+            do{
+                if(temporal->getFilter().compare(filterS) == 0){
+                    filtroS = temporal->getCubo();
+                }
+                temporal = temporal->getSiguiente();
+            }while(temporal != filters->getInicio());
+            //layer report
+            
+            system("cmd /c cls");
+            NodoListaM* temp = filtroS->getInicio();
+            while(temp != NULL){
+            cout<<"--"<<temp->getCapa()<<endl;
+            temp =  temp->getSiguiente();
+            }
+            cout<<"--C Graficar Completa\n"<<endl;
+            cin>>capaSelec;
+//GRAFICAR COMPLETA
+            if(capaSelec.compare("C") == 0 || capaSelec.compare("c") == 0){
+            //Matriz* unido = new Matriz();
+            int contI = 0;
+            temp = filtroS->getInicio();
+            Matriz* temporalM = new Matriz();
+            while(temp != NULL){
+                
+                temporalM = temp->getMatriz();
+                temp = temp->getSiguiente();
+                contI++;
+                temporalM->getGrafica(to_string(contI));
+            }
+            
+            
+//GRAFICAR CAPA UNICA     
+        }else{
+            
+            Matriz* tempM = filtroS->buscar(capaSelec);
+            if(tempM != NULL){
+              tempM->getGrafica(capaSelec);
+            }else{
+                menuLayer();
+     
+            }
+            
+        }
+            //
+           break;
+   }
+       case 3:
+           system("cmd /c cls");
+           menuReportes();
+           break;
+       default:
+           cout<<"Ingrese una opcion correcta\n";
+           system("cmd /c cls");
+           filtersReport();
+           break;
+   }
+}
+//MENU PRINCIPAL
 void menuP(){
     string opcion;
     int numero;
@@ -655,6 +1005,8 @@ void menuP(){
                  break;
              case 3:
                  cout<<"Apply Filters\n";
+                 system("cmd /c cls");
+                 aplicarFilters();
                  break;
              case 4:
                  cout<<"Manual Editing\n";
