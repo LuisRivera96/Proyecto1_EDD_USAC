@@ -38,6 +38,12 @@ public:
         if(inicio == NULL){
             inicio = nuevo;
             fin = nuevo;
+            inicio->setSiguiente(fin);
+            inicio->setAnterior(fin);
+            fin->setAnterior(inicio);
+            fin->setSiguiente(inicio);
+            
+            
         }else{
             nuevo->setAnterior(fin);
             nuevo->setSiguiente(inicio);

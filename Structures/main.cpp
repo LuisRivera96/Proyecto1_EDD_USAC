@@ -687,6 +687,23 @@ string Hex(int R, int G,int B){
     return '#'+rs+gs+bs;
 }
 //
+//COPIA DE LA LISTA SELECCIONADA
+void copiarCubo(ListaM* listaC,Matriz* capa,int capaS){
+    Matriz* nueva = new Matriz();
+    NodoFila* temF = capa->raizFila;
+    NodoContenido* tempC = temF->siguienteC;
+    while(temF != NULL){
+        tempC = temF->siguienteC;
+        while(tempC!=NULL){
+            nueva->add(tempC->x,tempC->y,tempC->R,tempC->G,tempC->B);
+            tempC = tempC->siguiente;
+        }
+        temF = temF->siguiente;
+    }
+    listaC->addMatriz(capaS,nueva);
+    
+}
+//
 //APLICACION DE FILTROS(FUNCIONALIDAD DE LA APLICACION)
 void aplicarFilters(){
     int filter;
@@ -707,14 +724,19 @@ void aplicarFilters(){
             cout<<"1 - Aplicar a toda la Imagen\n";
             cout<<"2 - Aplicar a capa Individual\n";
             cin>>seleccion;
-            ListaM* actual = cuboSeleccionado;
-            NodoListaM* temp = actual->getInicio();
-            Matriz* temporalM = new Matriz();
+            ListaM* actual = new ListaM();
+            NodoListaM* temp = cuboSeleccionado->getInicio();
+            while(temp != NULL){
+                copiarCubo(actual,temp->getMatriz(),temp->getCapa());
+                temp = temp->getSiguiente();   
+            }
+            NodoListaM* temporal = actual->getInicio();
+            Matriz* temporalM;
             switch(seleccion){
                 case 1:
                     
-                    while(temp != NULL){
-                        temporalM = temp->getMatriz();
+                    while(temporal != NULL){
+                        temporalM = temporal->getMatriz();
                         NodoFila* fila = temporalM->raizFila;
                         NodoContenido* contenido = fila->siguienteC;
                         while(fila != NULL){
@@ -732,7 +754,7 @@ void aplicarFilters(){
                             }
                             fila = fila->siguiente;
                         }
-                        temp = temp->getSiguiente();
+                        temporal = temporal->getSiguiente();
                     }
                     filters->addFilter("NEGATIVO",actual);
                     break;
@@ -742,13 +764,14 @@ void aplicarFilters(){
                     system("cmd /c cls");
                     int capaS;
                     cout<<"=======================ELEGIR CAPA===========================\n";
-                    temp = cuboSeleccionado->getInicio();
+                    //COPIA DE LA ACTUAL
+                    temp = actual->getInicio();
                     while(temp != NULL){
                         cout<<"--"<<temp->getCapa()<<endl;
                         temp =  temp->getSiguiente();
                     }
                     cin>>capaS;
-                    temp = cuboSeleccionado->getInicio();
+                    temp = actual->getInicio();
                     temporalM = new Matriz();
                     while(temp != NULL){
                         if(temp->getCapa() == capaS){
@@ -790,22 +813,28 @@ void aplicarFilters(){
             cout<<"1 - Aplicar a toda la Imagen\n";
             cout<<"2 - Aplicar a capa Individual\n";
             cin>>seleccion;
-            ListaM* actual = cuboSeleccionado;
-            NodoListaM* temp = actual->getInicio();
+            ListaM* actual = new ListaM();
+            NodoListaM* temp = cuboSeleccionado->getInicio();
+            while(temp != NULL){
+                copiarCubo(actual,temp->getMatriz(),temp->getCapa());
+                temp = temp->getSiguiente();   
+            }
+            NodoListaM* temporal = actual->getInicio();
             Matriz* temporalM = new Matriz();
             switch(seleccion){
                 case 1:
                     
-                    while(temp != NULL){
-                        temporalM = temp->getMatriz();
+                    while(temporal != NULL){
+                        temporalM = temporal->getMatriz();
                         NodoFila* fila = temporalM->raizFila;
                         NodoContenido* contenido = fila->siguienteC;
                         while(fila != NULL){
                             contenido = fila->siguienteC;
                             while(contenido != NULL){
-                                int RN = (int)contenido->R*0.33;
-                                int GN = (int)contenido->G*0.59;
-                                int BN = (int)contenido->B*0.11;
+                                int EG = (int)(contenido->R*0.33 + contenido->G*0.59+contenido->B*0.11);
+                                int RN = EG;
+                                int GN = EG;
+                                int BN = EG;
                                 contenido->RGB = to_string(RN)+"-"+to_string(GN)+"-"+to_string(BN);
                                 contenido->R = RN;
                                 contenido->G = GN;
@@ -815,7 +844,7 @@ void aplicarFilters(){
                             }
                             fila = fila->siguiente;
                         }
-                        temp = temp->getSiguiente();
+                        temporal = temporal->getSiguiente();
                     }
                     filters->addFilter("GRAYSCALE",actual);
                     break;
@@ -825,13 +854,13 @@ void aplicarFilters(){
                     system("cmd /c cls");
                     int capaS;
                     cout<<"=======================ELEGIR CAPA===========================\n";
-                    temp = cuboSeleccionado->getInicio();
+                    temp = actual->getInicio();
                     while(temp != NULL){
                         cout<<"--"<<temp->getCapa()<<endl;
                         temp =  temp->getSiguiente();
                     }
                     cin>>capaS;
-                    temp = cuboSeleccionado->getInicio();
+                    temp = actual->getInicio();
                     temporalM = new Matriz();
                     while(temp != NULL){
                         if(temp->getCapa() == capaS){
@@ -841,9 +870,10 @@ void aplicarFilters(){
                         while(fila != NULL){
                             contenido = fila->siguienteC;
                             while(contenido != NULL){
-                                int RN = (int)contenido->R*0.33;
-                                int GN = (int)contenido->G*0.59;
-                                int BN = (int)contenido->B*0.11;
+                                int EG = (int)(contenido->R*0.33 + contenido->G*0.59+contenido->B*0.11);
+                                int RN = EG;
+                                int GN = EG;
+                                int BN = EG;
                                 contenido->RGB = to_string(RN)+"-"+to_string(GN)+"-"+to_string(BN);
                                 contenido->R = RN;
                                 contenido->G = GN;
@@ -870,7 +900,7 @@ void aplicarFilters(){
             cout<<"MIRROR\n";
             break;
         case 4:
-            cout<<"collage\n";
+            cout<<"COLLAGE\n";
             break;
         case 5:
             cout<<"MOSAICO\n";
@@ -965,6 +995,105 @@ void filtersReport(){
            break;
    }
 }
+//EDICION MANUAL
+void manualEditing(){
+    int opcion;
+    int x,y,capa;
+    int r,g,b;
+    string filterS;
+    cout<<"===============================MANUAL EDITING======================\n";
+    cout<<"1 - OG Image\n";
+    cout<<"2 - Filters\n";
+    cin>>opcion;
+    switch(opcion){
+        case 1:
+        {
+            system("cmd /c cls");
+            cout<<"Ingrese la coordenada X\n";
+            cin>>x;
+            cout<<"Ingrese la coordenada Y\n";
+            cin>>y;
+            cout<<"Ingrese el Numero de Capa\n";
+            cin>>capa;
+            cout<<"Ingrese el color R\n";
+            cin>>r;
+            cout<<"Ingrese el color G\n";
+            cin>>g;
+            cout<<"Ingrese el color B\n";
+            cin>>b;
+            NodoListaM* temp = cuboSeleccionado->getInicio();
+            Matriz* mat = temp->getMatriz();
+            NodoFila* filat = mat->raizFila;
+            NodoContenido* contenidot = filat->siguienteC;
+            while(filat != NULL){
+                contenidot = filat->siguienteC;
+                while(contenidot != NULL){
+                    if(contenidot->x == x && contenidot->y == y){
+                        contenidot->R = r;
+                        contenidot->G = g;
+                        contenidot->B = b;
+                        contenidot->RGB = to_string(r)+"-"+to_string(g)+"-"+to_string(b);
+                    }
+                    contenidot = contenidot->siguiente;
+                }
+                filat = filat->siguiente;
+            }
+            cout<<"Se modifico el Nodo OG\n";
+            break;
+    }
+        case 2:
+        {
+             system("cmd /c cls");
+             cout<<"============================FILTERS======================\n";
+             filters->listFilters();
+             cin>>filterS;
+             NodoFilters* temporal = filters->getInicio();
+            do{
+                if(temporal->getFilter().compare(filterS) == 0){
+                    filtroS = temporal->getCubo();
+                }
+                temporal = temporal->getSiguiente();
+            }while(temporal != filters->getInicio());
+            system("cmd /c cls");
+            cout<<"Ingrese la coordenada X\n";
+            cin>>x;
+            cout<<"Ingrese la coordenada Y\n";
+            cin>>y;
+            cout<<"Ingrese el Numero de Capa\n";
+            cin>>capa;
+            cout<<"Ingrese el color R\n";
+            cin>>r;
+            cout<<"Ingrese el color G\n";
+            cin>>g;
+            cout<<"Ingrese el color B\n";
+            cin>>b;
+            NodoListaM* temp = filtroS->getInicio();
+            Matriz* mat = temp->getMatriz();
+            NodoFila* filat = mat->raizFila;
+            NodoContenido* contenidot = filat->siguienteC;
+            while(filat != NULL){
+                contenidot = filat->siguienteC;
+                while(contenidot != NULL){
+                    if(contenidot->x == x && contenidot->y == y){
+                        contenidot->R = r;
+                        contenidot->G = g;
+                        contenidot->B = b;
+                        contenidot->RGB = to_string(r)+"-"+to_string(g)+"-"+to_string(b);
+                    }
+                    contenidot = contenidot->siguiente;
+                }
+                filat = filat->siguiente;
+            }
+            cout<<"Se modifico el Nodo en Filters\n";
+            break;
+        }
+        default:
+            cout<<"Ingrese una opcion Correcta\n";
+            system("cmd /c cls");
+            manualEditing();
+            break;
+    }
+}
 //MENU PRINCIPAL
 void menuP(){
     string opcion;
@@ -1010,6 +1139,8 @@ void menuP(){
                  break;
              case 4:
                  cout<<"Manual Editing\n";
+                 system("cmd /c cls");
+                 manualEditing();
                  break;
              case 5:
                  cout<<"Export Image\n";
