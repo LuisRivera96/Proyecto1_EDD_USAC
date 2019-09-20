@@ -170,9 +170,18 @@ void cargarCubo(string ruta,string capaM,string archivo){
         int R,G,B = 0;
         string dato = "";
         //
+        string archSalto;
+        //cout<<archivo.size()<<endl;,,
+        char ultima = archivo[archivo.size()-1];
+        string ult;
+        ult += ultima;
+        if(ult.compare("v") == 0){
+            archSalto = archivo;
+        }else{
+           archSalto = archivo.replace(archivo.size()-1,1,"");
+        }
+        cout<<"imprimpiendo ultima "<<archivo[archivo.size()-1]<<"*"<<endl;
         
-        //cout<<archivo.size()<<endl;
-        string archSalto = archivo.replace(archivo.size()-1,1,"");
         cout<<archSalto<<"*"<<endl;
         string Ncapa = ruta+"/"+archSalto;
         cout<<Ncapa<<"+"<<endl;
@@ -183,20 +192,22 @@ void cargarCubo(string ruta,string capaM,string archivo){
             cout<<"se abrio el archivo\n";
             //capa = NULL;
             Capa = new Matriz();
-            while (!capas.eof()) {
-                capas >> cadena;
+            for(string linea;getline(capas,linea);){
+               
                 //cout<<"FilaA "<<fila<<endl;
                 fila++;
-                for(int i=0;i<cadena.size();i++){
-                    char temp = cadena[i];
+                for(int i=0;i<linea.size();i++){
+                    char temp = linea[i];
+                    
                     if(estado == 0){
                         if(temp == 88 || temp == 120){
                             //cout<<"temp"<<temp<<endl;
                             estado = 1;
                         }else if(temp >=48 && temp<=57){
                             dato+=temp;
-                        }else if(temp == 45){
+                        }else if(temp == 45 || temp == 47){
                             //cout<<"temp"<<temp<<endl;
+                            
                             estado = 2;
                             R = stoi(dato);
                             dato = "";
@@ -207,11 +218,13 @@ void cargarCubo(string ruta,string capaM,string archivo){
                         if(temp == 44){
                             estado = 0;
                             columna++;
+                        }else{
+                            estado = 0;
                         }
                     }else if(estado == 2){
                         if(temp>=48 && temp<=57){
                             dato+=temp;
-                        }else if(temp == 45){
+                        }else if(temp == 45 || temp == 47){
                            // cout<<"temp"<<temp<<endl;
                             estado = 3;
                             G = stoi(dato);
@@ -220,26 +233,18 @@ void cargarCubo(string ruta,string capaM,string archivo){
                     }else if(estado == 3){
                         if(temp >= 48 && temp <= 57){
                             dato+= temp;
-                        }else if(temp == 44){
-                            //cout<<"temp"<<temp<<endl;
+                        }else{
                             B = stoi(dato);
                             dato="";
-                            estado = 0;
+                            estado = 0; 
                             cout<<"X:"<<columna<<" Y:"<<fila<<" RGB:"<<R<<G<<B<<endl;
-                            //
                             Capa->add(columna,fila,R,G,B);
-                                  
-                            
-                            //
                             columna++;
-                        } 
+                        }
                     }
                 }
                 //cout<<"Col "<<columna<<endl;
-                columna = 1;
-                //cout<<"Fila: "<<fila<<endl;
-                
-                
+                columna = 1; 
             }
             
             //cub = NULL;
@@ -596,7 +601,7 @@ void exportArchivos(string opcion){
             while(fila != NULL){
                 contenido = fila->siguienteC;
                 while(contenido != NULL){
-                    file2 << ".pixel:nth-child("+to_string((contenido->y-1)*nodoActual->getImageW()+contenido->x)+"){background: "+Hex(contenido->R,contenido->G,contenido->B)+";}\n";
+                    file2 << ".pixel:nth-child("+to_string((contenido->y-1)*nodoActual->getImageH()+contenido->x)+"){background: "+Hex(contenido->R,contenido->G,contenido->B)+";}\n";
                     contenido = contenido->siguiente;
                 }
                 fila =  fila->siguiente;
@@ -652,7 +657,7 @@ void exportArchivos(string opcion){
             while(fila != NULL){
                 contenido = fila->siguienteC;
                 while(contenido != NULL){
-                    file2 << ".pixel:nth-child("+to_string((contenido->y-1)*nodoActual->getImageW()+contenido->x)+"){background: "+Hex(contenido->R,contenido->G,contenido->B)+";}\n";
+                    file2 << ".pixel:nth-child("+to_string((contenido->y-1)*nodoActual->getImageH()+contenido->x)+"){background: "+Hex(contenido->R,contenido->G,contenido->B)+";}\n";
                     contenido = contenido->siguiente;
                 }
                 fila =  fila->siguiente;
@@ -897,8 +902,166 @@ void aplicarFilters(){
     }
             break;
         case 3:
+        {
+            system("cmd /c cls");
+            int espejo;
             cout<<"MIRROR\n";
+            cout<<"1- X-Mirror(Espejo en eje X)\n";
+            cout<<"2- Y-Mirror(Espejo en eje Y)\n";
+            cout<<"3- Double Mirror(Espejo en ambos ejes)\n";
+            cout<<"4 - Back\n";
+            cin>>espejo;
+            switch(espejo){
+                case 1:
+                    {
+                        ListaM* actual = new ListaM();
+                        NodoListaM* temp = cuboSeleccionado->getInicio();
+                        while (temp != NULL) {
+                            copiarCubo(actual, temp->getMatriz(), temp->getCapa());
+                            temp = temp->getSiguiente();
+                        }
+                        NodoListaM* temporal = actual->getInicio();
+                        Matriz* temporalM = new Matriz();
+                        //
+                        ListaM* mirrorX = new ListaM();
+                        //
+                        while(temporal != NULL){
+                        Matriz* nuevaX = new Matriz();
+                        temporalM = temporal->getMatriz();
+                        NodoFila* fila = temporalM->raizFila;
+                        NodoContenido* contenido = fila->siguienteC;
+                        while(fila != NULL){
+                            contenido = fila->siguienteC;
+                            while(contenido != NULL){
+                                //cambiar coordenanda x
+                                int nuevaCX = nodoActual->getImageW()-(contenido->x-1);
+                                nuevaX->add(nuevaCX,contenido->y,contenido->R,contenido->G,contenido->B);
+                                //
+                                contenido = contenido->siguiente;
+                            }
+                            fila = fila->siguiente;
+                        }
+                        mirrorX->addMatriz(temporal->getCapa(),nuevaX);
+                        temporal = temporal->getSiguiente();
+                        
+                    }
+                    //
+                    filters->addFilter("X-Mirror",mirrorX);
+                    break;
+                }
+                case 2:
+                {
+                    ListaM* actual = new ListaM();
+                        NodoListaM* temp = cuboSeleccionado->getInicio();
+                        while (temp != NULL) {
+                            copiarCubo(actual, temp->getMatriz(), temp->getCapa());
+                            temp = temp->getSiguiente();
+                        }
+                        NodoListaM* temporal = actual->getInicio();
+                        Matriz* temporalM = new Matriz();
+                        //
+                        ListaM* mirrorX = new ListaM();
+                        //
+                        while(temporal != NULL){
+                        Matriz* nuevaX = new Matriz();
+                        temporalM = temporal->getMatriz();
+                        NodoFila* fila = temporalM->raizFila;
+                        NodoContenido* contenido = fila->siguienteC;
+                        while(fila != NULL){
+                            contenido = fila->siguienteC;
+                            while(contenido != NULL){
+                                //cambiar coordenanda x
+                                int nuevaCY = nodoActual->getImageH()-(contenido->y-1);
+                                nuevaX->add(contenido->x,nuevaCY,contenido->R,contenido->G,contenido->B);
+                                //
+                                contenido = contenido->siguiente;
+                            }
+                            fila = fila->siguiente;
+                        }
+                        mirrorX->addMatriz(temporal->getCapa(),nuevaX);
+                        temporal = temporal->getSiguiente();
+                        
+                    }
+                    //
+                    filters->addFilter("Y-Mirror",mirrorX);
+                    break;
+                }
+                case 3:
+                {   
+                    //vuelta eje x
+                        ListaM* actual = new ListaM();
+                        NodoListaM* temp = cuboSeleccionado->getInicio();
+                        while (temp != NULL) {
+                            copiarCubo(actual, temp->getMatriz(), temp->getCapa());
+                            temp = temp->getSiguiente();
+                        }
+                        NodoListaM* temporal = actual->getInicio();
+                        Matriz* temporalM = new Matriz();
+                        //
+                        ListaM* mirrorX = new ListaM();
+                        //
+                        while(temporal != NULL){
+                        Matriz* nuevaX = new Matriz();
+                        temporalM = temporal->getMatriz();
+                        NodoFila* fila = temporalM->raizFila;
+                        NodoContenido* contenido = fila->siguienteC;
+                        while(fila != NULL){
+                            contenido = fila->siguienteC;
+                            while(contenido != NULL){
+                                //cambiar coordenanda x
+                                int nuevaCX = nodoActual->getImageW()-(contenido->x-1);
+                                nuevaX->add(nuevaCX,contenido->y,contenido->R,contenido->G,contenido->B);
+                                //
+                                contenido = contenido->siguiente;
+                            }
+                            fila = fila->siguiente;
+                        }
+                        mirrorX->addMatriz(temporal->getCapa(),nuevaX);
+                        temporal = temporal->getSiguiente();
+                        
+                    }
+                    //vuelta en eje y    
+                        NodoListaM* temporal2 = mirrorX->getInicio();
+                        Matriz* temporalM2 = new Matriz();
+                        //
+                        ListaM* espejo = new ListaM();
+                        //
+                        while(temporal2 != NULL){
+                        Matriz* nuevaX = new Matriz();
+                        temporalM2 = temporal2->getMatriz();
+                        NodoFila* fila = temporalM2->raizFila;
+                        NodoContenido* contenido = fila->siguienteC;
+                        while(fila != NULL){
+                            contenido = fila->siguienteC;
+                            while(contenido != NULL){
+                                //cambiar coordenanda x
+                                int nuevaCY = nodoActual->getImageH()-(contenido->y-1);
+                                nuevaX->add(contenido->x,nuevaCY,contenido->R,contenido->G,contenido->B);
+                                //
+                                contenido = contenido->siguiente;
+                            }
+                            fila = fila->siguiente;
+                        }
+                        espejo->addMatriz(temporal2->getCapa(),nuevaX);
+                        temporal2 = temporal2->getSiguiente();
+                        
+                    }
+                    //
+                    filters->addFilter("Double Mirror",espejo);    
+                    break;
+                }
+                case 4:
+                    system("cmd /c cls");
+                    aplicarFilters();
+                    break;
+                default:
+                    cout<<"Ingrese una opcion Correcta\n";
+                    system("cmd /c cls");
+                    aplicarFilters();
+                    break;
+            }
             break;
+        }
         case 4:
             cout<<"COLLAGE\n";
             break;
@@ -1004,6 +1167,7 @@ void manualEditing(){
     cout<<"===============================MANUAL EDITING======================\n";
     cout<<"1 - OG Image\n";
     cout<<"2 - Filters\n";
+    cout<<"3 - BACK\n";
     cin>>opcion;
     switch(opcion){
         case 1:
@@ -1023,6 +1187,9 @@ void manualEditing(){
             cin>>b;
             NodoListaM* temp = cuboSeleccionado->getInicio();
             Matriz* mat = temp->getMatriz();
+            while(temp != NULL){
+            mat = temp->getMatriz();
+            if(temp->getCapa() == capa){
             NodoFila* filat = mat->raizFila;
             NodoContenido* contenidot = filat->siguienteC;
             while(filat != NULL){
@@ -1037,6 +1204,9 @@ void manualEditing(){
                     contenidot = contenidot->siguiente;
                 }
                 filat = filat->siguiente;
+            }
+            }
+            temp = temp->getSiguiente();
             }
             cout<<"Se modifico el Nodo OG\n";
             break;
@@ -1069,6 +1239,9 @@ void manualEditing(){
             cin>>b;
             NodoListaM* temp = filtroS->getInicio();
             Matriz* mat = temp->getMatriz();
+            while(temp != NULL){
+            mat = temp->getMatriz();
+            if(temp->getCapa() == capa){
             NodoFila* filat = mat->raizFila;
             NodoContenido* contenidot = filat->siguienteC;
             while(filat != NULL){
@@ -1084,9 +1257,16 @@ void manualEditing(){
                 }
                 filat = filat->siguiente;
             }
+            }
+            temp = temp->getSiguiente();
+        }
             cout<<"Se modifico el Nodo en Filters\n";
             break;
         }
+        case 3:
+            system("cmd /c cls");
+            menuP();
+            break;
         default:
             cout<<"Ingrese una opcion Correcta\n";
             system("cmd /c cls");
