@@ -57,15 +57,17 @@ void cargaImagenes(){
     string ruta;
     string datos;
     vector<string> val;
+    string capas[1000];
     int fila = 1;
     int columna = 1;
+    int nCapa = 0;
     string capa;
     cub = new ListaM();
    // char pos[] = "";
     cout<<"Ingrese Nombre del Archivo Inicial\n";
     cout<<"2 - Back.\n";
     cin>>ruta;
-    string archInicial = ruta+"/"+ruta+".csv";
+    string archInicial = "Images/"+ruta+"/"+ruta+".csv";
     if(ruta.compare("2") == 0){
         system("cmd /c cls");
         menuP();
@@ -87,10 +89,11 @@ void cargaImagenes(){
                    }else if(fila>4){
                        if(fila%2 != 0){
                            capa = val[i];
-                       }else{
                            
-                           cargarCubo(ruta,capa,val[i]);
-                            
+                       }else{
+                           int cap = stoi(capa);
+                           capas[cap] = val[i];
+                           
                        }
                    }
                    fila++;
@@ -100,8 +103,17 @@ void cargaImagenes(){
               
                
            }
-         
+           for (int i = 0; i < 1000; i++) {
+                                    if(capas[i].compare("") == 0){
+                                        
+                                    }else{
+                                        cargarCubo(ruta,to_string(i),capas[i]);
+                                    }
+                                    
+                                }
+           
        }
+       
        inicial.close();
        
 }
@@ -109,7 +121,7 @@ void cargaImagenes(){
 //METODO QUE RECORRE EL ARCHVIDO DE CONFIG.CSV PARA PODER SACAR SUS DATOS
 void leerConfig(string ruta,string config){
     string archSalto = config.replace(config.size()-1,1,"");
-    string archInicial = ruta+"/"+archSalto;
+    string archInicial = "Images/"+ruta+"/"+archSalto;
     string datos;
     vector<string> val;
     int fila = 1;
@@ -180,10 +192,10 @@ void cargarCubo(string ruta,string capaM,string archivo){
         }else{
            archSalto = archivo.replace(archivo.size()-1,1,"");
         }
-        cout<<"imprimpiendo ultima "<<archivo[archivo.size()-1]<<"*"<<endl;
+        //cout<<"imprimpiendo ultima "<<archivo[archivo.size()-1]<<"*"<<endl;
         
         cout<<archSalto<<"*"<<endl;
-        string Ncapa = ruta+"/"+archSalto;
+        string Ncapa = "Images/"+ruta+"/"+archSalto;
         cout<<Ncapa<<"+"<<endl;
         ifstream capas(Ncapa);
         if (capas.fail()) {
@@ -277,6 +289,7 @@ void menuSelectImage(){
          cuboSeleccionado = arbol.BusquedaI(entrada);
          nodoActual = arbol.ImageB(entrada);
          filters = new ListaFilters();
+         cout<<"CuboS "<<nodoActual->getNombre()<<endl;
          system("cmd /c cls");
          menuP();
     }
@@ -585,7 +598,7 @@ void exportArchivos(string opcion){
         file2.open(creacionCSS);
         file2 << "body {\n background :#333333;\nheight : 100vh;\ndisplay: flex;\njustify-content : center;\nalign-items : center;\n}\n";
         file2 << ".canvas {\n";
-        file2 << "width: "+to_string(nodoActual->getImageH()*nodoActual->getPixelH())+"px;\n";
+        file2 << "width: "+to_string(nodoActual->getImageW()*nodoActual->getPixelW())+"px;\n";
         file2 << "height: "+to_string(nodoActual->getImageH()*nodoActual->getPixelH())+"px;\n";
         file2 << "}\n";
         file2 << ".pixel {\n";
@@ -601,7 +614,7 @@ void exportArchivos(string opcion){
             while(fila != NULL){
                 contenido = fila->siguienteC;
                 while(contenido != NULL){
-                    file2 << ".pixel:nth-child("+to_string((contenido->y-1)*nodoActual->getImageH()+contenido->x)+"){background: "+Hex(contenido->R,contenido->G,contenido->B)+";}\n";
+                    file2 << ".pixel:nth-child("+to_string((contenido->y-1)*nodoActual->getImageW()+contenido->x)+"){background: "+Hex(contenido->R,contenido->G,contenido->B)+";}\n";
                     contenido = contenido->siguiente;
                 }
                 fila =  fila->siguiente;
@@ -641,7 +654,7 @@ void exportArchivos(string opcion){
         file2.open(creacionCSS);
         file2 << "body {\n background :#333333;\nheight : 100vh;\ndisplay: flex;\njustify-content : center;\nalign-items : center;\n}\n";
         file2 << ".canvas {\n";
-        file2 << "width: "+to_string(nodoActual->getImageH()*nodoActual->getPixelH())+"px;\n";
+        file2 << "width: "+to_string(nodoActual->getImageW()*nodoActual->getPixelW())+"px;\n";
         file2 << "height: "+to_string(nodoActual->getImageH()*nodoActual->getPixelH())+"px;\n";
         file2 << "}\n";
         file2 << ".pixel {\n";
@@ -657,7 +670,7 @@ void exportArchivos(string opcion){
             while(fila != NULL){
                 contenido = fila->siguienteC;
                 while(contenido != NULL){
-                    file2 << ".pixel:nth-child("+to_string((contenido->y-1)*nodoActual->getImageH()+contenido->x)+"){background: "+Hex(contenido->R,contenido->G,contenido->B)+";}\n";
+                    file2 << ".pixel:nth-child("+to_string((contenido->y-1)*nodoActual->getImageW()+contenido->x)+"){background: "+Hex(contenido->R,contenido->G,contenido->B)+";}\n";
                     contenido = contenido->siguiente;
                 }
                 fila =  fila->siguiente;
