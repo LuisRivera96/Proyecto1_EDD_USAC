@@ -53,18 +53,22 @@ public:
         }
     }
     
-    string graficaFilters(NodoFilters* inicio){
+    string graficaFilters(NodoFilters* inicioS){
         string dot = "";
-        NodoFilters* aux = inicio;
+        NodoFilters* aux = inicioS;
+        
         do{
-            dot += aux->getFilter()+"[label=\""+aux->getFilter()+"];\n";
+            dot += aux->getFilter()+"[label=\""+aux->getFilter()+"\"];\n";
             if(aux->getSiguiente() != NULL){
-                dot += aux->getFilter() + " -> " + aux->getSiguiente()->getFilter() + " -> " + aux->getFilter();
+                dot += aux->getFilter()+" -> "+aux->getSiguiente()->getFilter() + " -> "+aux->getFilter()+";\n";
             }
             aux = aux->getSiguiente();
         }while(aux!= inicio);
         
+        
+        return dot;
     }
+    
     
     
     void listFilters(){
@@ -84,7 +88,7 @@ public:
         dot += "node[shape=\"rectangle\"];\n";
         dot += graficaFilters(inicio);   
         dot += "}";
-        cout << dot;
+        //cout << dot;
         ofstream file;
         file.open("FILTERS.dot");
         file << dot;

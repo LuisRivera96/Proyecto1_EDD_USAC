@@ -74,12 +74,11 @@ public:
             cout<<"No existe la Imagen\n";
             return NULL;
         }else if(image.compare(raiz->getNombre()) == 0){
-            //cout<<raiz->getNombre()<<"\n";
             return raiz->getCubo();
         }else if(image.compare(raiz->getNombre()) < 0){
-            Busqueda(image,raiz->getIzquierda());
+            return Busqueda(image,raiz->getIzquierda());
         }else{
-            Busqueda(image,raiz->getDerecha());
+           return Busqueda(image,raiz->getDerecha());
         }
     }
     
@@ -92,12 +91,11 @@ public:
             cout<<"No existe la Imagen\n";
             return NULL;
         }else if(image.compare(raiz->getNombre()) == 0){
-            //cout<<raiz->getNombre()<<"\n";
             return raiz;
         }else if(image.compare(raiz->getNombre()) < 0){
-            ImageBR(image,raiz->getIzquierda());
+            return ImageBR(image,raiz->getIzquierda());
         }else{
-            ImageBR(image,raiz->getDerecha());
+            return ImageBR(image,raiz->getDerecha());
         }
     }
     //RECORRIDOS//

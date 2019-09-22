@@ -1,0 +1,11 @@
+digraph FILTERS{
+compound=true;
+rankdir="LR"
+node[shape="rectangle"];
+NEGATIVO[label="NEGATIVO"];
+NEGATIVO -> GRAYSCALE -> NEGATIVO;
+GRAYSCALE[label="GRAYSCALE"];
+GRAYSCALE -> DoubleMirror -> GRAYSCALE;
+DoubleMirror[label="DoubleMirror"];
+DoubleMirror -> NEGATIVO -> DoubleMirror;
+}

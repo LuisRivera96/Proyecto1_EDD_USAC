@@ -44,6 +44,8 @@ NodoABB* nodoActual;
 ListaLinealizacion* linea;
 int ImageW,ImageH = 0;
 int PixelW,PixelH = 0;
+int repX,repY = 0;
+string collageA;
 //
 class Menus{
 public:
@@ -83,17 +85,12 @@ void cargaImagenes(){
                for(int i= 0;i<val.size();i++){
                   // cout<<val[i]<<endl;   
                    //cout<<"F"<<fila<<endl;
-                   if(fila == 4){
-                       cout<<"config"<<endl;
-                       leerConfig(ruta,val[i]);
-                   }else if(fila>4){
+                   if(fila>2){
                        if(fila%2 != 0){
                            capa = val[i];
-                           
                        }else{
                            int cap = stoi(capa);
-                           capas[cap] = val[i];
-                           
+                           capas[cap] = val[i]; 
                        }
                    }
                    fila++;
@@ -104,13 +101,18 @@ void cargaImagenes(){
                
            }
            for (int i = 0; i < 1000; i++) {
-                                    if(capas[i].compare("") == 0){
-                                        
-                                    }else{
-                                        cargarCubo(ruta,to_string(i),capas[i]);
-                                    }
-                                    
-                                }
+                    if (capas[i].compare("") == 0) {
+                        //
+                    } else {
+                        if(i == 0){
+                            leerConfig(ruta,capas[i]);
+                        }else{
+                          cargarCubo(ruta, to_string(i), capas[i]);  
+                        }
+                        
+                    }
+
+                }
            
        }
        
@@ -538,6 +540,7 @@ void exportImage(){
             filters->listFilters();
             cout << "2 - BACK.\n";
             cin>>filterS;
+            collageA = filterS;
             if(filterS.compare("2") == 0){
                 system("cmd /c cls");
                 menuP();
@@ -627,7 +630,13 @@ void exportArchivos(string opcion){
         NodoListaM* temp = filtroS->getInicio();
         Matriz* temporalM = new Matriz();
         //cout<<"n "<<nodoActual->getNombre()<<endl;
-        int pixelT = nodoActual->getImageW()*nodoActual->getImageH();
+        int pixelT;
+        if(collageA.compare("COLLAGE") == 0 && repX != 0 && repY !=0){
+          pixelT = nodoActual->getImageW()*nodoActual->getImageH()*repX*repY;
+        }else{
+          pixelT = nodoActual->getImageW()*nodoActual->getImageH();  
+        }
+         
         string creacionHTML = "Exports/"+nodoActual->getNombre()+".html";
         string creacionCSS = "Exports/"+nodoActual->getNombre()+".css";
         
@@ -654,8 +663,14 @@ void exportArchivos(string opcion){
         file2.open(creacionCSS);
         file2 << "body {\n background :#333333;\nheight : 100vh;\ndisplay: flex;\njustify-content : center;\nalign-items : center;\n}\n";
         file2 << ".canvas {\n";
+        if(collageA.compare("COLLAGE") == 0 && repX != 0 && repY !=0){
+        file2 << "width: "+to_string(nodoActual->getImageW()*nodoActual->getPixelW()*repX)+"px;\n";
+        file2 << "height: "+to_string(nodoActual->getImageH()*nodoActual->getPixelH()*repY)+"px;\n"; 
+        }else{
         file2 << "width: "+to_string(nodoActual->getImageW()*nodoActual->getPixelW())+"px;\n";
-        file2 << "height: "+to_string(nodoActual->getImageH()*nodoActual->getPixelH())+"px;\n";
+        file2 << "height: "+to_string(nodoActual->getImageH()*nodoActual->getPixelH())+"px;\n"; 
+        }
+        
         file2 << "}\n";
         file2 << ".pixel {\n";
         file2 << "width: "+to_string(nodoActual->getPixelW())+"px;\n";
@@ -678,6 +693,7 @@ void exportArchivos(string opcion){
             temp = temp->getSiguiente();
         }
         file2.close();
+        
     }
 }
 //RGB A HEXADECIMAL
@@ -1060,7 +1076,7 @@ void aplicarFilters(){
                         
                     }
                     //
-                    filters->addFilter("Double Mirror",espejo);    
+                    filters->addFilter("DoubleMirror",espejo);    
                     break;
                 }
                 case 4:
@@ -1076,8 +1092,61 @@ void aplicarFilters(){
             break;
         }
         case 4:
-            cout<<"COLLAGE\n";
+        {
+            //COLLAGE
+            int fil = 0;
+            int Rx,Ry;
+            system("cmd /c cls");
+            cout<<"=========================COLLAGE========================\n";
+            cout<<"Ingrese la cantidad de repeticiones sobre el eje X\n";
+            cin>>Rx;
+            cout<<"Ingrese la cantidad de repeticiones sobre el eje Y\n";
+            cin>>Ry;
+            repX = Rx;
+            repY = Ry;
+                ListaM* actual = new ListaM();
+                NodoListaM* temp = cuboSeleccionado->getInicio();
+                while (temp != NULL) {
+                    copiarCubo(actual, temp->getMatriz(), temp->getCapa());
+                    temp = temp->getSiguiente();
+                }
+                NodoListaM* temporal = actual->getInicio();
+                Matriz* temporalM = new Matriz();
+                        //
+                        ListaM* collage = new ListaM();
+                        //
+                        while(temporal != NULL){
+                        Matriz* nuevaX = new Matriz();
+                        temporalM = temporal->getMatriz();
+                        NodoFila* fila = temporalM->raizFila;
+                        NodoContenido* contenido = fila->siguienteC;
+                        while(fila != NULL){
+                            contenido = fila->siguienteC;
+                            while(contenido != NULL){
+                                //copiar nodo en coordenadas
+                                while(fil < Ry){
+                                    for (int j = 0; j < Rx; j++) {
+                                    int nuevaCX = contenido->x+Rx*j;    
+                                    int nuevaCY = Ry*fil+(fil+1);
+                                    cout<<"ingresara(x,y) "<<nuevaCX<<","<<nuevaCY<<" c: "<<contenido->RGB<<endl;
+                                    nuevaX->add(nuevaCX, nuevaCY, contenido->R, contenido->G, contenido->B);
+                                    }
+                                    fil++;
+                                }
+                                contenido = contenido->siguiente;
+                            }
+                            fila = fila->siguiente;
+                        }
+                        collage->addMatriz(temporal->getCapa(),nuevaX); 
+                        temporal = temporal->getSiguiente();
+                        
+                    }
+                       
+                    //
+                    filters->addFilter("COLLAGE",collage);
+            //
             break;
+        }
         case 5:
             cout<<"MOSAICO\n";
             break;

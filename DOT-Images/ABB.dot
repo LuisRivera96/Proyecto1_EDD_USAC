@@ -1,7 +1,7 @@
 digraph ABB{
 compound=true;
 node[shape="Mrecord"];
-Letra:fLetra[id=Letra, color="blue"]; 
-Letra[label=" <NLetraI>  | <fLetra> Letra\n | <fLetraD> " shape="record"];
-"Letra" : fLetraD ->  Mario:fMario[id=Mario, color="blue" shape="rectangle"]; 
+Mario:fMario[id=Mario, color="blue"]; 
+Mario[label=" <NMarioI>  | <fMario> Mario\n | <fMarioD> " shape="record"];
+"Mario" : fMarioD ->  Mushroom:fMushroom[id=Mushroom, color="blue" shape="rectangle"]; 
 }
