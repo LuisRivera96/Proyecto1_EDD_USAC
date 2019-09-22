@@ -685,7 +685,12 @@ void exportArchivos(string opcion){
             while(fila != NULL){
                 contenido = fila->siguienteC;
                 while(contenido != NULL){
-                    file2 << ".pixel:nth-child("+to_string((contenido->y-1)*nodoActual->getImageW()+contenido->x)+"){background: "+Hex(contenido->R,contenido->G,contenido->B)+";}\n";
+                    if(collageA.compare("COLLAGE") == 0){
+                        file2 << ".pixel:nth-child("+to_string((contenido->y-1)*(nodoActual->getImageW()*repX)+contenido->x)+"){background: "+Hex(contenido->R,contenido->G,contenido->B)+";}\n";
+                    }else{
+                         file2 << ".pixel:nth-child("+to_string((contenido->y-1)*nodoActual->getImageW()+contenido->x)+"){background: "+Hex(contenido->R,contenido->G,contenido->B)+";}\n";
+                    }
+                   
                     contenido = contenido->siguiente;
                 }
                 fila =  fila->siguiente;
@@ -1094,7 +1099,6 @@ void aplicarFilters(){
         case 4:
         {
             //COLLAGE
-            int fil = 0;
             int Rx,Ry;
             system("cmd /c cls");
             cout<<"=========================COLLAGE========================\n";
@@ -1124,15 +1128,14 @@ void aplicarFilters(){
                             contenido = fila->siguienteC;
                             while(contenido != NULL){
                                 //copiar nodo en coordenadas
-                                while(fil < Ry){
+                                for (int i = 0; i < Ry; i++) {
                                     for (int j = 0; j < Rx; j++) {
-                                    int nuevaCX = contenido->x+Rx*j;    
-                                    int nuevaCY = Ry*fil+(fil+1);
-                                    cout<<"ingresara(x,y) "<<nuevaCX<<","<<nuevaCY<<" c: "<<contenido->RGB<<endl;
+                                    int nuevaCX = nodoActual->getImageW()*j+contenido->x;    
+                                    int nuevaCY = nodoActual->getImageH()*i+contenido->y;
+                                   //cout<<"ingresara(x,y) "<<nuevaCX<<","<<nuevaCY<<" c: "<<contenido->RGB<<endl;
                                     nuevaX->add(nuevaCX, nuevaCY, contenido->R, contenido->G, contenido->B);
                                     }
-                                    fil++;
-                                }
+                            }
                                 contenido = contenido->siguiente;
                             }
                             fila = fila->siguiente;
