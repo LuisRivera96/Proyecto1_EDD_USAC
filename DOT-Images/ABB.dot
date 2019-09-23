@@ -3,5 +3,7 @@ compound=true;
 node[shape="Mrecord"];
 Mario:fMario[id=Mario, color="blue"]; 
 Mario[label=" <NMarioI>  | <fMario> Mario\n | <fMarioD> " shape="record"];
-"Mario" : fMarioD ->  Mushroom:fMushroom[id=Mushroom, color="blue" shape="rectangle"]; 
+"Mario" : fMarioD ->  Pikachu:fPikachu[id=Pikachu, color="blue"]; 
+Pikachu[label=" <NPikachuI>  | <fPikachu> Pikachu\n | <fPikachuD> " shape="record"];
+"Pikachu" : NPikachuI ->  Mushroom:fMushroom[id=Mushroom, color="blue" shape="rectangle"]; 
 }

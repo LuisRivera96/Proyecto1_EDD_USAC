@@ -1177,7 +1177,12 @@ void filtersReport(){
    switch(reporte){
        case 1:
        {
-           filters->getGraphFilters();
+           if(filters->getInicio() == NULL){
+               cout<<"LISTA DE FILTROS APLICADOS VACIA\n";
+           }else{
+               filters->getGraphFilters();
+           }
+           
            break;
         }
        case 2:
