@@ -2,8 +2,10 @@ digraph FILTERS{
 compound=true;
 rankdir="LR"
 node[shape="rectangle"];
+DoubleMirror[label="DoubleMirror"];
+DoubleMirror -> COLLAGE -> DoubleMirror;
+COLLAGE[label="COLLAGE"];
+COLLAGE -> NEGATIVO -> COLLAGE;
 NEGATIVO[label="NEGATIVO"];
-NEGATIVO -> GRAYSCALE -> NEGATIVO;
-GRAYSCALE[label="GRAYSCALE"];
-GRAYSCALE -> NEGATIVO -> GRAYSCALE;
+NEGATIVO -> DoubleMirror -> NEGATIVO;
 }

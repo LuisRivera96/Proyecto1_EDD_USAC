@@ -1,9 +1,13 @@
 digraph ABB{
 compound=true;
 node[shape="Mrecord"];
-Mario:fMario[id=Mario, color="blue"]; 
-Mario[label=" <NMarioI>  | <fMario> Mario\n | <fMarioD> " shape="record"];
-"Mario" : fMarioD ->  Pikachu:fPikachu[id=Pikachu, color="blue"]; 
-Pikachu[label=" <NPikachuI>  | <fPikachu> Pikachu\n | <fPikachuD> " shape="record"];
-"Pikachu" : NPikachuI ->  Mushroom:fMushroom[id=Mushroom, color="blue" shape="rectangle"]; 
+Mushroom:fMushroom[id=Mushroom, color="blue"]; 
+Mushroom[label=" <NMushroomI>  | <fMushroom> Mushroom\n | <fMushroomD> " shape="record"];
+"Mushroom" : fMushroomD ->  bmo:fbmo[id=bmo, color="blue"]; 
+bmo[label=" <NbmoI>  | <fbmo> bmo\n | <fbmoD> " shape="record"];
+"bmo" : NbmoI ->  Pikachu:fPikachu[id=Pikachu, color="blue" shape="rectangle"]; 
+"bmo" : fbmoD ->  lucina:flucina[id=lucina, color="blue"]; 
+lucina[label=" <NlucinaI>  | <flucina> lucina\n | <flucinaD> " shape="record"];
+"lucina" : NlucinaI ->  corrin:fcorrin[id=corrin, color="blue" shape="rectangle"]; 
+"lucina" : flucinaD ->  tux:ftux[id=tux, color="blue" shape="rectangle"]; 
 }

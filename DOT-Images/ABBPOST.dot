@@ -1,7 +1,10 @@
 digraph ABB{
 label="PostOrden";
 rankdir="LR";
-Mushroom;
-Mushroom -> Pikachu;
-Pikachu -> Mario;
-Mario -> }
+Pikachu;
+Pikachu -> corrin;
+corrin -> tux;
+tux -> lucina;
+lucina -> bmo;
+bmo -> Mushroom;
+Mushroom -> }

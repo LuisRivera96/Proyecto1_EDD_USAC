@@ -1,10 +1,10 @@
 digraph ABB{
 label="Inorden";
 rankdir="LR";
-Armando;
-Armando -> Doctor;
-Doctor -> Mario;
-Mario -> Mario2;
-Mario2 -> Mario3;
-Mario3 -> Mario4;
-Mario4 -> }
+Mushroom;
+Mushroom -> Pikachu;
+Pikachu -> bmo;
+bmo -> corrin;
+corrin -> lucina;
+lucina -> tux;
+tux -> }
