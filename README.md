@@ -14,3 +14,7 @@ Incluye:
 -Lista Doblemente Enlazada
 -Matriz Dispersa
 -Lista Simple de Matrices Dispersas
+
+NOTA: 92/100
+
+"Falta el Filtro de Mosaico"
